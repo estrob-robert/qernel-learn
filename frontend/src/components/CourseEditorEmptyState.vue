@@ -80,6 +80,7 @@ import { Button } from 'frappe-ui'
 import { computed, watch } from 'vue'
 import { useTelemetry } from '@framework/ui/telemetry/index'
 import type { OutlineChapter } from '@/types'
+import { helpUrl } from '@/utils/brand'
 
 type Step = { label: string; done: boolean; current: boolean }
 type StateName = 'no_chapters' | 'no_lessons' | 'no_lesson_open'
@@ -125,8 +126,8 @@ function steps(current: 'chapter' | 'lesson'): Step[] {
 }
 
 const DOCS = {
-	chapter: 'https://docs.frappe.io/learning/add-a-chapter',
-	lesson: 'https://docs.frappe.io/learning/course-creation/adding-a-lesson',
+	chapter: helpUrl('https://docs.frappe.io/learning/add-a-chapter'),
+	lesson: helpUrl('https://docs.frappe.io/learning/course-creation/adding-a-lesson'),
 }
 
 const state = computed(() => {

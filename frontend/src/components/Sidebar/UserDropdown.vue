@@ -42,7 +42,7 @@
 							>
 								{{ branding.data?.app_name }}
 							</span>
-							<span v-else> Learning </span>
+							<span v-else> Qernel Learn </span>
 						</div>
 						<div
 							v-if="userResource.data"
@@ -86,6 +86,7 @@ import { pushSettingsHash } from '@/composables/useSettingsHash'
 import { isV1CloudAdmin } from '@/composables/cloudSettings'
 import { safeUrl } from '@/utils/safeUrl'
 import { openExternal } from '@/utils/openExternal'
+import { SOURCE_URL } from '@/utils/brand'
 
 const router = useRouter()
 const { logout, branding } = sessionStore()
@@ -263,6 +264,12 @@ const userDropdownOptions = computed(() => {
 						})
 					},
 					condition: isV1CloudAdmin,
+				},
+				{
+					// AGPL-3.0 §13: the source of this modified version.
+					icon: 'lucide-code',
+					label: __('Source code'),
+					onClick: () => openExternal(SOURCE_URL),
 				},
 				{
 					icon: 'lucide-log-out',

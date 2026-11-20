@@ -189,17 +189,14 @@
 							/>
 						</button>
 					</Tooltip>
-					<Tooltip :text="__('Powered by Frappe Learning')">
+					<Tooltip :text="__('Powered by Qernel')">
 						<a
-							href="https://frappe.io/learning"
+							:href="poweredByUrl()"
 							v-external
 							class="flex"
-							:aria-label="__('Powered by Frappe Learning')"
+							:aria-label="__('Powered by Qernel')"
 						>
-							<span
-								class="lucide-zap size-4 text-ink-gray-7 cursor-pointer"
-								aria-hidden="true"
-							/>
+							<LMSLogo mono class="size-4 text-ink-gray-7 cursor-pointer" />
 						</a>
 					</Tooltip>
 				</div>
@@ -228,13 +225,13 @@
 			v-model="showHelpModal"
 			v-model:articles="articles"
 			appName="learning"
-			title="Frappe Learning"
+			:title="APP_NAME"
 			:logo="LMSLogo"
 			:afterSkip="(step) => capture('onboarding_step_skipped_' + step)"
 			:afterSkipAll="() => capture('onboarding_steps_skipped')"
 			:afterReset="(step) => capture('onboarding_step_reset_' + step)"
 			:afterResetAll="() => capture('onboarding_steps_reset')"
-			docsLink="https://docs.frappe.io/learning"
+			:docsLink="HELP_URL"
 		/>
 		<IntermediateStepModal
 			v-model="showIntermediateModal"
@@ -258,6 +255,7 @@ import { useSettings } from '@/stores/settings'
 import { Button, call, ScrollArea, Tooltip, toast } from 'frappe-ui'
 import PageModal from '@/components/Modals/PageModal.vue'
 import LMSLogo from '@/components/Icons/LMSLogo.vue'
+import { APP_NAME, HELP_URL, poweredByUrl } from '@/utils/brand'
 import { useRouter } from 'vue-router'
 import { openFormRoute } from '@/composables/useFormRoute'
 import {

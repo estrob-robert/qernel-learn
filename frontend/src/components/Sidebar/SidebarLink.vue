@@ -4,7 +4,9 @@
 		:data-notifications-trigger="link.panel === 'notifications' ? '' : null"
 		class="flex w-full h-7 cursor-pointer items-center rounded-4 text-ink-gray-8 duration-300 ease-in-out focus:outline-none focus:transition-none focus-visible:rounded-4 focus-visible:ring-2 focus-visible:ring-outline-gray-3"
 		:class="
-			isActive ? 'bg-surface-elevation-3 shadow-sm' : 'hover:bg-surface-gray-2'
+			isActive
+				? 'bg-surface-elevation-3 shadow-sm qernel-active-link'
+				: 'hover:bg-surface-gray-2'
 		"
 		@click="handleClick"
 	>

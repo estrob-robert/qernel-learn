@@ -2982,15 +2982,11 @@ def delete_member(user: str):
 @frappe.whitelist(methods=["POST"])
 def capture_user_persona(responses: str):
 	frappe.only_for("System Manager")
-	data = frappe.parse_json(responses)
-	data = json.dumps(data)
-	response = frappe.integrations.utils.make_post_request(
-		"https://school.frappe.io/api/method/capture-persona",
-		data={"response": data},
-	)
-	if response.get("message").get("name"):
-		frappe.db.set_single_value("LMS Settings", "persona_captured", True)
-	return response
+	# Qernel Learn: the setup answers stay on the site. Upstream posts them to
+	# school.frappe.io; nothing about our customers is sent to a third party.
+	frappe.parse_json(responses)
+	frappe.db.set_single_value("LMS Settings", "persona_captured", True)
+	return {"message": {}}
 
 
 @frappe.whitelist()
@@ -3376,7 +3372,7 @@ def get_app_logo_icons() -> list[dict]:
 @frappe.whitelist(allow_guest=True)
 def get_pwa_manifest():
 	"""Web app manifest for installing the LMS as a PWA."""
-	title = frappe.db.get_single_value("Website Settings", "app_name") or "Frappe Learning"
+	title = frappe.db.get_single_value("Website Settings", "app_name") or "Qernel Learn"
 	route = get_lms_route()
 
 	# `display` was absent, so it defaulted to "browser" and the installed app

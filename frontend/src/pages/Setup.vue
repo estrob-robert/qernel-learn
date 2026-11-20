@@ -11,7 +11,7 @@
 				class="flex items-center gap-2 text-base font-medium text-ink-gray-9"
 			>
 				<LMSLogo class="size-6" />
-				{{ __('Frappe Learning') }}
+				{{ __('Qernel Learn') }}
 			</div>
 		</template>
 
@@ -252,5 +252,5 @@ async function finish() {
 	window.location.href = router.resolve(goalRoute).href
 }
 
-usePageMeta(() => ({ title: __('Set up Frappe Learning') }))
+usePageMeta(() => ({ title: __('Set up Qernel Learn') }))
 </script>

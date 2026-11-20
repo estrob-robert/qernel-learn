@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="112 125 800 800" width="800" height="800">
+  <defs>
+    <mask id="qernel-q-hole">
+      <rect x="0" y="0" width="1000" height="1000" fill="#FFFFFF" />
+      <rect x="265" y="305" width="430" height="320" rx="85" ry="85" fill="#000000" />
+    </mask>
+  </defs>
+  <g mask="url(#qernel-q-hole)" fill="#FF6B35">
+    <rect x="130" y="170" width="700" height="590" rx="220" ry="220" />
+    <polygon points="640,720 735,625 895,785 800,880" />
+  </g>
+</svg>

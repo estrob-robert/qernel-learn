@@ -15,7 +15,7 @@
 		<Button
 			v-if="docs"
 			variant="ghost"
-			:href="safeUrl(docs)"
+			:href="safeUrl(helpUrl(docs))"
 			:label="__('Read the docs')"
 			@click="act('docs')"
 		>
@@ -31,6 +31,7 @@ import { onMounted, watch } from 'vue'
 import type { RouteLocationRaw } from 'vue-router'
 import { useTelemetry } from '@framework/ui/telemetry/index'
 import { safeUrl } from '@/utils/safeUrl'
+import { helpUrl } from '@/utils/brand'
 
 // The buttons under a list's empty state, for people who can fill the list.
 // It mounts only while that empty state shows, so mounting is the "shown" event.

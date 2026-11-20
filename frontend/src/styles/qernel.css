@@ -1,0 +1,55 @@
+/* Qernel Learn: Qernel's brand on top of frappe-ui.
+
+   frappe-ui's accent is its darkest gray (`surface-gray-10`): the solid button,
+   a switch or checkbox that is on, the progress fill. Qernel's accent is its
+   orange with warm near-black text on it (apps/web/app/globals.css and
+   components/ui/button.tsx in the Qernel repo). This file repaints exactly those
+   places and nothing else, so `surface-gray-10` keeps its meaning everywhere it
+   is not an accent (tooltips, avatars, text).
+
+   The same orange in light and dark mode, as in Qernel. */
+
+:root {
+	--qernel-brand: #ff6b35;
+	--qernel-brand-hover: #ed5a24;
+	--qernel-brand-active: #d64e1c;
+	--qernel-brand-ink: #2b1206; /* text on orange, about 6:1 */
+}
+
+/* Solid buttons, and switches and checkboxes that are on (all buttons in frappe-ui). */
+button.bg-surface-gray-10,
+a.bg-surface-gray-10,
+[role='switch'].bg-surface-gray-10,
+[role='checkbox'].bg-surface-gray-10 {
+	background-color: var(--qernel-brand);
+	color: var(--qernel-brand-ink);
+}
+button.bg-surface-gray-10:hover:not(:disabled),
+a.bg-surface-gray-10:hover,
+[role='switch'].bg-surface-gray-10:hover:not(:disabled) {
+	background-color: var(--qernel-brand-hover);
+}
+button.bg-surface-gray-10:active:not(:disabled),
+a.bg-surface-gray-10:active {
+	background-color: var(--qernel-brand-active);
+}
+
+/* Progress fills: the course progress bar and frappe-ui's Progress. */
+[role='progressbar'] .bg-surface-gray-10 {
+	background-color: var(--qernel-brand);
+}
+
+/* The page you are on in the sidebar gets Qernel's orange bar on the left.
+   Drawn as a background image so it neither replaces the link's background
+   colour nor its shadow. */
+.qernel-active-link {
+	background-image: linear-gradient(var(--qernel-brand), var(--qernel-brand));
+	background-size: 2px 60%;
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+
+/* Keyboard focus rings in Qernel's orange, as in Qernel. */
+:focus-visible {
+	outline-color: var(--qernel-brand);
+}

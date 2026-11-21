@@ -83,7 +83,7 @@
 
 			<div class="mt-6">
 				<SettingsFields
-					:sections="accessSections"
+					:sections="visibleSections"
 					:data="settings.doc"
 					:focus="focusField"
 					@commit="docSave.commit"
@@ -303,6 +303,15 @@ const accessSections = [
 		],
 	},
 ]
+
+// Qernel Learn: guest access, the app install and the job board are ours on a
+// customer site (lms/qernel.py).
+const LOCKED_SECTIONS = ['Access & Availability']
+const visibleSections = computed(() =>
+	user?.data?.platform_locked
+		? accessSections.filter((s) => !LOCKED_SECTIONS.includes(s.label))
+		: accessSections
+)
 
 // Two writers: access toggles and text direction are LMS Settings fields,
 // while language and timezone are System Settings behind a System

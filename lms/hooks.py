@@ -385,3 +385,19 @@ raven_membership_providers = ["lms.raven_provider.get_provider"]
 # on System Manager plus whatever this hook names, and grants the named roles the
 # permissions its own doctypes need on install/migrate.
 raven_integration_manager_roles = ["Moderator"]
+
+# === Qernel Learn: the platform lock on customer sites, see lms/qernel.py ===
+_qernel_doc_events = {
+	"LMS Settings": {"validate": "lms.qernel.guard_lms_settings"},
+	"Job Opportunity": {"before_insert": "lms.qernel.guard_insert"},
+	"LMS Job Application": {"before_insert": "lms.qernel.guard_insert"},
+	"LMS Programming Exercise": {"before_insert": "lms.qernel.guard_insert"},
+	"LMS Coupon": {"before_insert": "lms.qernel.guard_insert"},
+	"LMS Payment": {"before_insert": "lms.qernel.guard_insert"},
+}
+for _doctype, _events in _qernel_doc_events.items():
+	for _event, _handler in _events.items():
+		# Upstream adding the same event would be overwritten here, so fail the
+		# build's import instead of silently dropping one of them.
+		assert _event not in doc_events.get(_doctype, {}), (_doctype, _event)
+		doc_events.setdefault(_doctype, {})[_event] = _handler

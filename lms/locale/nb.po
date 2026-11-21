@@ -5883,7 +5883,7 @@ msgstr "LMS-innholdsforfatter"
 #. Name of a DocType
 #: lms/lms/doctype/lms_coupon/lms_coupon.json:120
 msgid "LMS Coupon"
-msgstr "LMS-rabattkode"
+msgstr "Rabattkode"
 
 #. Name of a DocType
 #: lms/lms/doctype/lms_coupon_item/lms_coupon_item.json:36
@@ -5934,7 +5934,7 @@ msgstr "LMS-innstillinger for Google Meet"
 #. Name of a DocType
 #: lms/job/doctype/lms_job_application/lms_job_application.json:66
 msgid "LMS Job Application"
-msgstr "Jobbsøknad i LMS"
+msgstr "Jobbsøknad"
 
 #. Name of a DocType
 #: lms/lms/doctype/lms_lesson_assessment/lms_lesson_assessment.json:45
@@ -5964,7 +5964,7 @@ msgstr "LMS-alternativ"
 #. Name of a DocType
 #: lms/lms/doctype/lms_payment/lms_payment.json:207
 msgid "LMS Payment"
-msgstr "LMS-betaling"
+msgstr "Betaling"
 
 #. Name of a DocType
 #: lms/lms/doctype/lms_program/lms_program.json:106
@@ -5984,7 +5984,7 @@ msgstr "LMS-programmedlem"
 #. Name of a DocType
 #: lms/lms/doctype/lms_programming_exercise/lms_programming_exercise.json:84
 msgid "LMS Programming Exercise"
-msgstr "LMS programmeringsøvelse"
+msgstr "Programmeringsoppgave"
 
 #. Name of a DocType
 #: lms/lms/doctype/lms_programming_exercise_submission/lms_programming_exercise_submission.json:94
@@ -16096,3 +16096,19 @@ msgstr "Leksjonen blir først fullført når en kursholder har vurdert den."
 #: qernel-learn
 msgid "This is not enforced for videos from Cloudflare Stream, Google Drive, Aparat or other embedded links."
 msgstr "Dette gjelder ikke videoer fra Cloudflare Stream, Google Drive, Aparat eller andre innebygde lenker."
+
+#: lms/qernel.py
+msgid "{0} is not a member."
+msgstr "{0} er ikke deltaker."
+
+#: lms/qernel.py
+msgid "{0} is managed by Qernel."
+msgstr "{0} styres av Qernel."
+
+#: lms/qernel.py
+msgid "{0} is not available on this site."
+msgstr "{0} er ikke tilgjengelig på denne siden."
+
+#: lms/qernel.py
+msgid "Only a learner's email can be changed here."
+msgstr "Her kan bare e-posten til en deltaker endres."

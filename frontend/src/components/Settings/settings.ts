@@ -41,6 +41,14 @@ const emailAccountDefaults = markRaw(
 const cloudPanel = (panel: CloudSettingsPanel) =>
 	markRaw(() => h(CloudPanel, { panel }))
 
+// Qernel Learn: on a customer site payments, branding, SEO, signup, email
+// accounts and the services behind the portal are ours (lms/qernel.py, which
+// also enforces it). System Manager is never locked.
+const platformOpen = (): boolean =>
+	!usersStore().userResource.data?.platform_locked
+const openToModerators = (): boolean =>
+	Boolean(usersStore().userResource.data?.is_moderator) && platformOpen()
+
 /**
  * The settings tree, as data. Ported from settingsStructure.js, with every
  * item carrying a declared slug so a renamed label can't break a bookmark.
@@ -59,6 +67,7 @@ export const settingsTree: SettingsGroup[] = [
 			{
 				label: 'Signup',
 				slug: 'signup',
+				condition: platformOpen,
 				icon: 'lucide-log-in',
 				page: {
 					kind: 'fields',
@@ -291,6 +300,7 @@ export const settingsTree: SettingsGroup[] = [
 			{
 				label: 'Email Accounts',
 				slug: 'email-accounts',
+				condition: platformOpen,
 				icon: 'lucide-mail',
 				records: true,
 				page: emailAccountsPage,
@@ -311,6 +321,7 @@ export const settingsTree: SettingsGroup[] = [
 	},
 	{
 		label: 'Payment',
+		audience: openToModerators,
 		items: [
 			{
 				label: 'Configuration',
@@ -424,6 +435,7 @@ export const settingsTree: SettingsGroup[] = [
 			{
 				label: 'Services',
 				slug: 'services',
+				condition: platformOpen,
 				icon: 'lucide-key-round',
 				page: { kind: 'custom', component: markRaw(Services) },
 			},
@@ -453,6 +465,7 @@ export const settingsTree: SettingsGroup[] = [
 			{
 				label: 'Raven',
 				slug: 'raven',
+				condition: platformOpen,
 				icon: 'lucide-messages-square',
 				page: { kind: 'custom', component: markRaw(RavenSettings) },
 			},
@@ -460,6 +473,7 @@ export const settingsTree: SettingsGroup[] = [
 	},
 	{
 		label: 'Customization',
+		audience: openToModerators,
 		items: [
 			{
 				label: 'Branding',

@@ -46,6 +46,8 @@ export interface SessionUser {
 		is_student?: boolean
 		is_system_manager?: boolean
 		is_fc_site?: boolean
+		// Qernel Learn: a customer site, where the platform settings are ours.
+		platform_locked?: boolean
 		cloud_settings?: CloudContext
 		roles?: string[]
 		has_lms_role?: boolean

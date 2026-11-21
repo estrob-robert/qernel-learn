@@ -119,6 +119,10 @@ def get_user_info():
 		user.site_info = current_site_info()
 	user.cloud_settings = get_cloud_settings_context()
 	user.permissions = _doctype_permissions()
+	# Qernel Learn: hides the settings that are ours on a customer site.
+	from lms.qernel import platform_locked
+
+	user.platform_locked = platform_locked()
 	return user
 
 

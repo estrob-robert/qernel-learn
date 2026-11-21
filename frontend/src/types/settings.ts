@@ -14,6 +14,8 @@ export interface User {
 		is_evaluator: boolean
 		is_instructor: boolean
 		is_fc_site: boolean
+		// Qernel Learn: a customer site, where the platform settings are ours.
+		platform_locked?: boolean
 	}
 }
 

@@ -120,6 +120,20 @@ def _is_learner(user: str) -> bool:
 	)
 
 
+def _move_login_link(user: str):
+	"""The welcome mail's set-password link went to the old address, and the
+	rename keeps its key, so whoever reads that inbox could still set the
+	password. The key is dropped, and a learner who has not chosen a password
+	yet gets a new welcome mail at the new address. One who has signs in with
+	the new address and the same password."""
+	frappe.db.set_value("User", user, "reset_password_key", "")
+	# Passwords are stored hashed in __Auth; a row means one has been chosen.
+	if frappe.db.exists("__Auth", {"doctype": "User", "name": user, "fieldname": "password"}):
+		return
+	# nosemgrep: lms-unjustified-ignore-permissions - the learner was renamed by this call
+	frappe.get_doc("User", user).send_welcome_mail_to_user()
+
+
 def _clean_email(value) -> str:
 	email = (value or "").strip().lower() if isinstance(value, str) else ""
 	# validate_email_address returns every valid address it finds, joined by
@@ -171,6 +185,7 @@ def change_member_email(old_email: str, new_email: str) -> dict:
 	finally:
 		frappe.set_user(caller)
 		session.sid, session.data = sid, data
+	_move_login_link(new)
 	# User.after_rename sets the new email and signs the old one out. The
 	# contact Frappe made for the user keeps the address as plain text.
 	for name in frappe.get_all("Contact", filters={"user": new}, pluck="name"):

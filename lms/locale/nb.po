@@ -16044,3 +16044,55 @@ msgstr "Alle artikler"
 #: frontend/frameworkUiI18n.js
 msgid "Select option"
 msgstr "Velg"
+
+#: qernel-learn
+msgid "{0} open jobs"
+msgstr "{0} ledige stillinger"
+
+#: qernel-learn
+msgid "{0} closed jobs"
+msgstr "{0} lukkede stillinger"
+
+#: qernel-learn
+msgid "Course Categories"
+msgstr "Kurskategorier"
+
+#: qernel-learn
+msgid "Google Meet Settings"
+msgstr "Innstillinger for Google Meet"
+
+#: qernel-learn
+msgid "Payment Gateways"
+msgstr "Betalingsløsninger"
+
+#: qernel-learn
+msgid "Start a Discussion"
+msgstr "Start en diskusjon"
+
+#: qernel-learn
+msgid "Assignment Submissions"
+msgstr "Innleveringer"
+
+#: qernel-learn
+msgid "Programming Exercise Submissions"
+msgstr "Innleveringer av programmeringsoppgaver"
+
+#: qernel-learn
+msgid "Google Settings"
+msgstr "Google-innstillinger"
+
+#: qernel-learn
+msgid "New Signups"
+msgstr "Nye registreringer"
+
+#: qernel-learn
+msgid "A video that fails to load, or comes from Cloudflare Stream, Google Drive, Aparat or another embedded link, cannot be tracked, so its lesson completes on the completion time instead."
+msgstr "En video som ikke lastes, eller som kommer fra Cloudflare Stream, Google Drive, Aparat eller en annen innebygd lenke, kan ikke spores. Da blir leksjonen fullført når fullføringstiden er nådd."
+
+#: qernel-learn
+msgid "The lesson completes only after an instructor grades it."
+msgstr "Leksjonen blir først fullført når en kursholder har vurdert den."
+
+#: qernel-learn
+msgid "This is not enforced for videos from Cloudflare Stream, Google Drive, Aparat or other embedded links."
+msgstr "Dette gjelder ikke videoer fra Cloudflare Stream, Google Drive, Aparat eller andre innebygde lenker."

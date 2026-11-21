@@ -210,7 +210,7 @@ export const settingsTree: SettingsGroup[] = [
 				page: badgeAssignmentsSettingsPage,
 			},
 			{
-				label: 'Categories',
+				label: 'Course Categories',
 				slug: 'categories',
 				icon: 'lucide-network',
 				page: { kind: 'custom', component: markRaw(Categories) },

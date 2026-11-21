@@ -1,7 +1,11 @@
 <template>
 	<ListPage
 		:breadcrumbs="breadcrumbs"
-		:title="__('{0} {1} Jobs').format(jobCount.data ?? 0, activeTab)"
+		:title="
+			(activeTab === 'Closed' ? __('{0} closed jobs') : __('{0} open jobs')).format(
+				jobCount.data ?? 0
+			)
+		"
 		:rows="jobs.data || []"
 		:total-count="jobCount.data ?? 0"
 		:loading="jobs.list.loading"

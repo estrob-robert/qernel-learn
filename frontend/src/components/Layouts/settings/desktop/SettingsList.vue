@@ -84,8 +84,8 @@
 				:title="__('No results')"
 				:description="
 					search
-						? __('No {0} match {1}').format(emptyName.toLowerCase(), search)
-						: __('No {0} match this filter').format(emptyName.toLowerCase())
+						? __('No {0} match {1}').format(nounInSentence(emptyName), search)
+						: __('No {0} match this filter').format(nounInSentence(emptyName))
 				"
 				:icon="emptyIcon"
 			/>
@@ -108,6 +108,7 @@
 import { computed, type Component } from 'vue'
 import { Button, FormControl, LoadingIndicator } from 'frappe-ui'
 import EmptyStateLayout from '@/components/Layouts/EmptyStateLayout.vue'
+import { nounInSentence } from '@/utils/brand'
 import SettingsLayout from '@/components/Layouts/settings/desktop/SettingsLayout.vue'
 import SettingsTable from '@/components/Layouts/settings/desktop/SettingsTable.vue'
 import type { SettingsListColumn, SettingsListRow } from '@/types'

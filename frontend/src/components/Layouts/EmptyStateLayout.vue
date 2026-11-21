@@ -21,6 +21,7 @@
 </template>
 <script setup lang="ts">
 import { computed } from 'vue'
+import { nounInSentence } from '@/utils/brand'
 
 const props = withDefaults(
 	defineProps<{
@@ -37,7 +38,7 @@ const props = withDefaults(
 )
 
 const computedTitle = computed(
-	() => props.title || __('No {0} Found').format(props.name)
+	() => props.title || __('No {0} Found').format(nounInSentence(props.name))
 )
 
 const computedDescription = computed(
@@ -45,7 +46,7 @@ const computedDescription = computed(
 		props.description ||
 		__(
 			'There are no {0} currently. Keep an eye out, fresh learning experiences are on the way!'
-		).format(props.name?.toLowerCase())
+		).format(nounInSentence(props.name))
 )
 
 // The fractional widths are desktop-only. Unqualified, `w-4/12` is about 130px

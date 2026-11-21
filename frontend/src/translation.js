@@ -1,9 +1,15 @@
 import { createResource } from 'frappe-ui'
 
+// Resolves once the messages are in, or after a short wait if they never
+// come. main.js mounts the app after it, so text that components translate
+// while they set up (onboarding steps, column labels, menus) is not frozen in
+// English by an early render.
+export let translationsReady = Promise.resolve()
+
 export default function translationPlugin(app) {
 	app.config.globalProperties.__ = translate
 	window.__ = translate
-	if (!window.translatedMessages) fetchTranslations()
+	if (!window.translatedMessages) translationsReady = fetchTranslations()
 }
 
 function fill(message, args) {
@@ -32,12 +38,17 @@ function translate(message, replace) {
 }
 
 function fetchTranslations(lang) {
-	createResource({
-		url: 'lms.lms.api.get_translations',
-		cache: 'translations',
-		auto: true,
-		transform: (data) => {
-			window.translatedMessages = data
-		},
+	return new Promise((resolve) => {
+		setTimeout(resolve, 3000)
+		createResource({
+			url: 'lms.lms.api.get_translations',
+			cache: 'translations',
+			auto: true,
+			transform: (data) => {
+				window.translatedMessages = data
+				resolve()
+			},
+			onError: () => resolve(),
+		})
 	})
 }

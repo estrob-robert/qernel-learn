@@ -66,7 +66,7 @@
 		<div ref="scrollEl" class="pdf-scroll" @scroll.passive="scheduleUpdate">
 			<div v-if="loading" class="pdf-status">
 				<Loader2 :size="20" :stroke-width="1.5" class="pdf-spin" />
-				<span>Loading PDF…</span>
+				<span>{{ __('Loading PDF…') }}</span>
 			</div>
 			<div v-else-if="error" class="pdf-status pdf-error">
 				<span>{{ error }}</span>

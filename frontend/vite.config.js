@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import frameworkUiI18n from './frameworkUiI18n.js'
 
 // `@framework/ui` is imported by name and resolved through node_modules, so the
 // link there is load-bearing rather than a convenience. package.json declares it
@@ -43,6 +44,7 @@ export default defineConfig(async ({ mode }) => {
 			__VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
 		},
 		plugins: [
+			frameworkUiI18n(),
 			frappeui({
 				frappeProxy: true,
 				lucideIcons: true,

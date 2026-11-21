@@ -1,0 +1,17 @@
+{#- Qernel Learn: Frappe's templates/emails/new_user.html (v16.60.2), with the
+    heading from lms.qernel.welcome_title, so it names the customer on their
+    site. lms is searched before frappe, so this copy wins. -#}
+{% set site_link = "<a href='" + site_url + "'>" + site_url + "</a>" %}
+<h1 class="email-title">{{ welcome_title(app_name) | e }}</h1>
+<div class="email-body">
+	<p>{{ _("Hi {0}, an account has been created for you at {1}. Before you can log in, you'll need to set your password.").format(first_name | e, site_link) }}</p>
+	<p>{{ _("Your login ID is:") }} {{ user }}</p>
+	<div class="email-action">
+		<a class="email-btn email-btn-primary" href="{{ link }}">{{ _("Complete registration") }}</a>
+	</div>
+	<div class="email-copy">
+		<p>{{ _("Or copy and paste:") }}</p>
+		<a href="{{ link }}">{{ link }}</a>
+	</div>
+	<p class="email-ignore">{{ _("If you weren't expecting this account, you can safely ignore this email.") }}</p>
+</div>

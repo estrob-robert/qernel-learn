@@ -401,3 +401,8 @@ for _doctype, _events in _qernel_doc_events.items():
 		# build's import instead of silently dropping one of them.
 		assert _event not in doc_events.get(_doctype, {}), (_doctype, _event)
 		doc_events.setdefault(_doctype, {})[_event] = _handler
+
+# Qernel Learn: the welcome mail names whose course platform it is, see lms/qernel.py.
+assert "welcome_email" not in globals()
+welcome_email = ["lms.qernel.welcome_title"]
+jinja["methods"].append("lms.qernel.welcome_title")

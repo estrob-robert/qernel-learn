@@ -16112,3 +16112,7 @@ msgstr "{0} er ikke tilgjengelig på denne siden."
 #: lms/qernel.py
 msgid "Only a learner's email can be changed here."
 msgstr "Her kan bare e-posten til en deltaker endres."
+
+#: lms/qernel.py
+msgid "Welcome to {0}'s course platform {1}"
+msgstr "Velkommen til {0} sin kursplattform {1}"

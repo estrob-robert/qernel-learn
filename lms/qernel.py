@@ -20,6 +20,8 @@ from frappe import _
 from frappe.model import no_value_fields, table_fields
 
 LOCK_FLAG = "qernel_platform_lock"
+# The customer's own name, as their buyers know it ("Heart Mentality").
+CUSTOMER_NAME = "qernel_customer_name"
 
 # LMS Settings fields a customer's admins may still change on a locked site.
 # Everything else is ours, including any field a later Frappe Learning release
@@ -72,6 +74,20 @@ LOCKED_DOCTYPES = (
 # A plain learner, as add_member makes them. Only these accounts can have their
 # email changed by Qernel.
 LEARNER_ROLES = frozenset({"LMS Student", "All", "Guest"})
+
+
+def welcome_title(app_name: str | None = None) -> str:
+	"""Subject and heading of the welcome mail (hook `welcome_email`, and
+	templates/emails/new_user.html). On a customer site it names whose platform
+	it is, so the buyer does not read it as a visit to the customer (Robert
+	22.11): "Velkommen til Heart Mentality sin kursplattform Qernel Learn"."""
+	from frappe.email.email_body import get_brand_name
+
+	app_name = app_name or get_brand_name() or "Qernel Learn"
+	customer = frappe.conf.get(CUSTOMER_NAME)
+	if customer:
+		return _("Welcome to {0}'s course platform {1}").format(customer, app_name)
+	return _("Welcome to {0}").format(app_name)
 
 
 def platform_locked(user: str | None = None) -> bool:

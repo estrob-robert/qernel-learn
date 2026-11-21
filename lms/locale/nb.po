@@ -16040,3 +16040,7 @@ msgstr "Søk i artikler …"
 #: qernel-learn
 msgid "All articles"
 msgstr "Alle artikler"
+
+#: frontend/frameworkUiI18n.js
+msgid "Select option"
+msgstr "Velg"

@@ -65,18 +65,41 @@ const REPLACEMENTS = {
 	],
 }
 
+// frappe-ui's pickers default their placeholder and empty text to English. A
+// function default is called per instance, so it is translated when shown.
+const FRAPPE_UI = {
+	'components/Select/Select.vue': [
+		["placeholder: 'Select option',", "placeholder: () => __('Select option'),"],
+		["emptyText: 'No options',", "emptyText: () => __('No options'),"],
+	],
+	'components/Combobox/Combobox.vue': [
+		["placeholder: 'Select option',", "placeholder: () => __('Select option'),"],
+		["emptyText: 'No results',", "emptyText: () => __('No results'),"],
+	],
+	'components/MultiSelect/MultiSelect.vue': [
+		["placeholder: 'Select option',", "placeholder: () => __('Select option'),"],
+		["emptyText: 'No results',", "emptyText: () => __('No results'),"],
+	],
+}
+
 export default function frameworkUiI18n() {
 	return {
 		name: 'qernel-framework-ui-i18n',
 		enforce: 'pre',
 		transform(code, id) {
 			const file = id.split('?')[0].replace(/\\/g, '/')
-			if (!/\/(@framework\/ui|frappe\/ui)\/src\//.test(file)) return null
-			const key = Object.keys(REPLACEMENTS).find((k) => file.endsWith('/src/' + k))
+			let table
+			if (/\/(@framework\/ui|frappe\/ui)\/src\//.test(file)) table = REPLACEMENTS
+			else if (/\/node_modules\/frappe-ui\/src\//.test(file)) table = FRAPPE_UI
+			else return null
+			const key = Object.keys(table).find((k) => file.endsWith('/src/' + k))
 			if (!key) return null
 			let out = code
-			for (const [from, to] of REPLACEMENTS[key]) {
+			for (const [from, to] of table[key]) {
 				const count = out.split(from).length - 1
+				// Vite can hand the same file over again once it is rewritten; that
+				// pass finds the translated form, not the English one.
+				if (count === 0 && out.includes(to)) continue
 				if (count !== 1) {
 					this.warn(`${key}: expected one "${from}", found ${count}. Left in English.`)
 					continue

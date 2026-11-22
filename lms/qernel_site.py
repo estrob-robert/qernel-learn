@@ -23,6 +23,9 @@ from lms.qernel import CUSTOMER_NAME, LOCK_FLAG
 
 APP_NAME = "Qernel Learn"
 INTEGRATION_ROLE = "Qernel Integration"
+# Addresses that bounce (RFC 2606 and 6761, and the null MX of example.*).
+NO_MAIL_DOMAINS = frozenset({"example.com", "example.org", "example.net"})
+NO_MAIL_TLDS = frozenset({"example", "test", "invalid", "localhost", "local"})
 # What a customer's own admins get. Never System Manager: that one is ours.
 CUSTOMER_ADMIN_ROLES = ("Moderator", "Course Creator")
 # Same link as Qernel's own "Powered by Qernel", campaign is the site.
@@ -123,6 +126,12 @@ def invite(email: str, first_name: str, last_name: str = "", admin: int = 1):
 	"""Add a person to the site and send the welcome mail. `admin` gives the
 	customer's admin roles; without it they are a plain learner."""
 	email = email.strip().lower()
+	# The mail goes out through AhaSend, which is strict about bounces: never
+	# to an address that cannot receive it (Robert 22.11, after a test invite
+	# to example.com bounced). Test with robert+<anything>@estrob.com.
+	domain = email.rsplit("@", 1)[-1]
+	if domain in NO_MAIL_DOMAINS or domain.rsplit(".", 1)[-1] in NO_MAIL_TLDS:
+		frappe.throw(f"{email} cannot receive mail. Use a real address, such as robert+test@estrob.com.")
 	if not frappe.db.exists("User", email):
 		frappe.get_doc(
 			{

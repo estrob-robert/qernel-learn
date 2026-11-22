@@ -18,6 +18,7 @@ too.
 import frappe
 from frappe import _
 from frappe.model import no_value_fields, table_fields
+from frappe.utils import flt
 
 LOCK_FLAG = "qernel_platform_lock"
 # The customer's own name, as their buyers know it ("Heart Mentality").
@@ -128,6 +129,99 @@ def guard_insert(doc, method=None):
 			_("{0} is not available on this site.").format(_(doc.doctype)),
 			frappe.PermissionError,
 		)
+
+
+# Everything a learner has in one course, by DocType. Each names the learner in
+# `member` and the course in `course`.
+COURSE_RECORDS = (
+	"LMS Enrollment",
+	"LMS Course Progress",
+	"LMS Video Watch Duration",
+	"LMS Quiz Submission",
+	"LMS Assignment Submission",
+	"LMS Lesson Note",
+	"LMS Certificate",
+	"LMS Certificate Request",
+	"LMS Certificate Evaluation",
+)
+# Rows that exist once per learner and lesson (or course): when both learners
+# have one, the one further along is kept.
+MERGED = {
+	"LMS Enrollment": ("course", lambda a, b: False),
+	"LMS Course Progress": ("lesson", lambda a, b: a.status == "Complete" and b.status != "Complete"),
+	"LMS Video Watch Duration": ("lesson", lambda a, b: flt(a.watch_time) > flt(b.watch_time)),
+}
+
+
+@frappe.whitelist(methods=["POST"])
+def move_member_course(old_email: str, new_email: str, course: str) -> dict:
+	"""Qernel: a buyer made the order's email their account's, and that address
+	already has a learner, so change_member_email answered 409. The course moves
+	to that learner with everything done in it: enrollment, lesson progress,
+	video time, quiz and assignment submissions, notes and certificates.
+	Robert 22.11: a learner must never lose progress because she changes
+	address. Where both learners have the same lesson, the one further along is
+	kept, so nothing done is lost. Moving back is the same call the other way.
+	Safe to retry: a course already moved moves nothing."""
+	from lms.lms.utils import get_course_progress
+
+	frappe.only_for("Qernel Integration")
+	old = _clean_email(old_email)
+	new = _clean_email(new_email)
+	if not isinstance(course, str) or not frappe.db.exists("LMS Course", course):
+		frappe.throw(_("{0} is not a course.").format(frappe.bold(course)), frappe.DoesNotExistError)
+	if old == new:
+		return {"email": new, "moved": 0}
+	for user in (old, new):
+		if not frappe.db.exists("User", user):
+			frappe.throw(_("{0} is not a member.").format(frappe.bold(user)), frappe.DoesNotExistError)
+		if not _is_learner(user):
+			frappe.throw(_("Only a learner's email can be changed here."), frappe.PermissionError)
+
+	profile = frappe.db.get_value("User", new, ["full_name", "username", "user_image"], as_dict=True)
+	moved = 0
+	for doctype in COURSE_RECORDS:
+		meta = frappe.get_meta(doctype)
+		key, further = MERGED.get(doctype, (None, None))
+		fields = ["name"]
+		if key:
+			fields += [key] + [f for f in ("status", "watch_time", "current_lesson") if meta.has_field(f)]
+		for row in frappe.get_all(doctype, {"member": old, "course": course}, fields):
+			if key:
+				theirs = frappe.db.get_value(
+					doctype, {"member": new, "course": course, key: row[key]}, fields, as_dict=True
+				)
+				if theirs:
+					keep, drop = (row, theirs) if further(row, theirs) else (theirs, row)
+					# The unique (member, lesson) and (member, course) indexes allow
+					# one row: the one further along takes the new learner.
+					if doctype == "LMS Enrollment":
+						if not theirs.current_lesson and row.current_lesson:
+							frappe.db.set_value(doctype, theirs.name, "current_lesson", row.current_lesson)
+						# Through the document, so the course's enrollment count follows.
+						frappe.delete_doc(doctype, drop.name, ignore_permissions=True, force=True)
+					else:
+						frappe.db.delete(doctype, {"name": drop.name})
+					if keep.name == theirs.name:
+						moved += 1
+						continue
+			values = {"member": new}
+			for field, value in (
+				("member_name", profile.full_name),
+				("member_username", profile.username),
+				("member_image", profile.user_image),
+			):
+				if meta.has_field(field):
+					values[field] = value
+			frappe.db.set_value(doctype, row.name, values, update_modified=False)
+			moved += 1
+
+	enrollment = frappe.db.get_value("LMS Enrollment", {"member": new, "course": course}, "name")
+	if enrollment:
+		frappe.db.set_value(
+			"LMS Enrollment", enrollment, "progress", get_course_progress(course, new), update_modified=False
+		)
+	return {"email": new, "moved": moved}
 
 
 def _is_learner(user: str) -> bool:

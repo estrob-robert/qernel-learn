@@ -3,8 +3,11 @@
 Run on the Windows machine, where the AhaSend key lives (user environment
 variables AHASEND_COURSE_KEY and AHASEND_ACCOUNT_ID):
 
-    python qernel/customer-email.py <domain> <sender email> "<sender name>"
-    python qernel/customer-email.py learn.heartmentality.no kurs@email.heartmentality.no "Heart Mentality"
+    python qernel/customer-email.py <domain> <sender email> "<sender name>" [<reply-to>]
+    python qernel/customer-email.py learn.heartmentality.no kurs@email.heartmentality.no "Heart Mentality" hei@heartmentality.no
+
+The sender's domain only sends, so replies go to <reply-to>, an inbox the
+customer reads.
 
 It makes an SMTP credential in AhaSend, locked to the sender's domain, and
 hands it straight to the site (lms.qernel_site.configure_email). AhaSend shows
@@ -59,9 +62,10 @@ def ssh(command, stdin=None):
 
 
 def main():
-	if len(sys.argv) != 4:
+	if len(sys.argv) not in (4, 5):
 		sys.exit(__doc__)
 	site, sender, name = sys.argv[1], sys.argv[2].strip().lower(), sys.argv[3]
+	reply_to = sys.argv[4].strip().lower() if len(sys.argv) == 5 else ""
 	domain = sender.split("@", 1)[1]
 
 	domains = api("GET", "/domains").get("data", [])
@@ -82,6 +86,7 @@ def main():
 			"sender_name": name,
 			"login_id": credential["username"],
 			"password": credential["password"],
+			"reply_to": reply_to,
 		}
 	)
 	del credential["password"]

@@ -100,6 +100,12 @@ def configure_email(secret_file: str, attempts: int = 8):
 		"always_use_account_email_id_as_sender": 1,
 		"always_use_account_name_as_sender_name": 1,
 		"footer": POWERED_BY.format(site=site),
+		# The sender's domain only sends; a reply lands in the customer's own
+		# inbox (Heart: the contact address Qernel's order mails reply to).
+		"add_reply_to_header": 1,
+		"reply_to_addresses": (
+			[{"_name": name, "email": data["reply_to"]}] if data.get("reply_to") else []
+		),
 	}
 	for attempt in range(1, attempts + 1):
 		try:

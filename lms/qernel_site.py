@@ -136,6 +136,9 @@ def invite(email: str, first_name: str, last_name: str = "", admin: int = 1):
 	user = frappe.get_doc("User", email)
 	if int(admin):
 		user.add_roles(*CUSTOMER_ADMIN_ROLES)
+	# bench execute runs in Administrator's language (English); the mail is
+	# in the site's.
+	frappe.local.lang = frappe.db.get_single_value("System Settings", "language") or "nb"
 	user.send_welcome_mail_to_user()
 	frappe.db.commit()
 	print(f"invited {email} with roles {sorted(frappe.get_roles(email))}")
@@ -283,6 +286,8 @@ def _integration_user(site):
 				"first_name": "Qernel",
 				"last_name": "Integration",
 				"user_type": "System User",
+				# The welcome mails Qernel's purchases send go out in this language.
+				"language": "nb",
 				"send_welcome_email": 0,
 			}
 		).insert(ignore_permissions=True)

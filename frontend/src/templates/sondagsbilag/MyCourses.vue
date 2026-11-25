@@ -133,7 +133,13 @@ const summary = computed(() => {
 const greeting = computed(() => {
 	const name = user.value?.first_name || user.value?.full_name?.split(' ')[0] || ''
 	const hour = new Date().getHours()
-	const text = hour < 10 ? __('Good morning') : hour < 18 ? __('Good afternoon') : __('Good evening')
+	// Past midnight is still evening in Norwegian; "god natt" is a goodbye.
+	const text =
+		hour >= 5 && hour < 10
+			? __('Good morning')
+			: hour >= 10 && hour < 18
+				? __('Good afternoon')
+				: __('Good evening')
 	return name ? `${text}, ${name}` : text
 })
 

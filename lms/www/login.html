@@ -14,13 +14,26 @@
 	if (!window.location.hash) {
 		history.replaceState(null, '', window.location.pathname + window.location.search + '#login-with-email-link')
 	}
+	{% if design.theme == 'dark' and design.boot.logo_dark %}
+	document.addEventListener('DOMContentLoaded', function () {
+		document.querySelectorAll('.app-logo').forEach(function (img) {
+			img.src = {{ design.boot.logo_dark | tojson }}
+		})
+	})
+	{% endif %}
 </script>
 {% endif %}
 {% endblock %}
 
 {% block page_content %}
 {% if design %}
-<div class="qsb-login">
+<div class="qsb-login{% if design.theme == 'dark' and not design.boot.logo_dark %} qsb-login--named{% endif %}">
+	{#- Dark mode takes only the dark-background logo, as in the app
+	    (frontend/src/templates/index.ts): without one, the name in the
+	    template's type stands in for a logo that may vanish on the dark page. -#}
+	{% if design.theme == 'dark' and not design.boot.logo_dark %}
+	<div class="qsb-login-name qsb-cond">{{ design.boot.name }}</div>
+	{% endif %}
 	<div class="qsb-login-head">
 		<h1 class="qsb-cond">{{ _("Welcome back") }}</h1>
 		<p class="qsb-quote">{{ _("Your courses are waiting where you left off.") }}</p>

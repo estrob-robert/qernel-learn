@@ -103,6 +103,24 @@ html[data-template='magasin-sondagsbilag'][data-theme='dark'] .qsb-cond {
 	width: auto;
 	object-fit: contain;
 }
+.qsb-login--named .page-card-head {
+	display: none !important;
+}
+.qsb-login-name {
+	position: fixed;
+	top: 18px;
+	left: max(22px, calc(50vw - 238px));
+	font-size: 28px;
+	margin: 0;
+	color: var(--q-on-block);
+}
+/* Frappe gives the card a full screen of height on small screens, which pushed
+ * the form up under the logo and the heading below the fold. The column here
+ * already fills the screen and sets the form at the bottom. */
+.qsb-login .page-card {
+	min-height: 0 !important;
+	height: auto !important;
+}
 .qsb-login label {
 	color: inherit !important;
 	font-weight: 700;

@@ -34,7 +34,7 @@
 			</div>
 
 			<template v-if="course.assignments.length">
-				<div class="sb-label rs-sub">{{ __('Assignments') }}</div>
+				<div class="sb-label rs-sub">{{ __('Your assignments') }}</div>
 				<div v-for="a in course.assignments" :key="a.title" class="rs-assignment">
 					<div class="rs-row">
 						<b>{{ a.title }}</b>

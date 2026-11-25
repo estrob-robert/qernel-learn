@@ -56,11 +56,12 @@ export function useTemplateScreens() {
 	)
 }
 
-// The logo for the theme in use: the dark-background logo in dark mode when
-// the customer gave one.
+// The logo for the theme in use. Dark mode takes only the dark-background
+// logo: a logo drawn for light paper often has black lettering that vanishes
+// on the dark page (learn.qernel.one, 25.11), so without one the shell sets the
+// customer's name in the template's type instead. A logo that works on both is
+// sent by Qernel as both.
 export const logo = computed(() => {
 	if (!design) return ''
-	return design.theme === 'dark' && design.logo_dark
-		? design.logo_dark
-		: design.logo_light
+	return design.theme === 'dark' ? design.logo_dark : design.logo_light
 })

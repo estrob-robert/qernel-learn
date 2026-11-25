@@ -45,7 +45,7 @@
 								class="size-4 stroke-1.5 shrink-0 transition-transform"
 								:class="{ '-rotate-90': !open }"
 							/>
-							<span class="truncate">{{ chapter.title }}</span>
+							<span class="sls-chapter truncate">{{ chapter.title }}</span>
 						</div>
 						<span
 							v-if="chapter.lessons?.length"
@@ -79,7 +79,8 @@
 													query: studentViewQuery,
 											  }
 									"
-									class="flex w-full items-center gap-3 rounded-4 ps-9 pe-3 py-2 text-start text-sm leading-5 text-ink-gray-8 hover:bg-surface-gray-2"
+									class="sls-lesson flex w-full items-center gap-3 rounded-4 ps-9 pe-3 py-2 text-start text-sm leading-5 text-ink-gray-8 hover:bg-surface-gray-2"
+									:data-active="isActive(lesson.number) ? 'true' : undefined"
 									:class="[
 										lesson.locked
 											? 'cursor-not-allowed opacity-60'

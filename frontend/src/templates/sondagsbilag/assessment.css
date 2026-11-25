@@ -141,7 +141,7 @@ html[data-template='magasin-sondagsbilag'] .as-option input {
 	opacity: 0;
 	cursor: pointer;
 }
-html[data-template='magasin-sondagsbilag'] .as-option:focus-within {
+html[data-template='magasin-sondagsbilag'] .as-option:has(input:focus-visible) {
 	outline: 3px solid var(--q-accent);
 	outline-offset: 3px;
 }
@@ -160,14 +160,16 @@ html[data-template='magasin-sondagsbilag'] .as-option:has(input:disabled) input 
 
 /* After checking: the right answer as a card in the customer's colour, a
  * wrong choice struck through, the rest quiet. */
-html[data-template='magasin-sondagsbilag'] .as-option:has(.lucide-check-circle),
-html[data-template='magasin-sondagsbilag'] .as-option:has(.lucide-minus-circle) {
+/* The verdict outranks "chosen": :has(input:checked) counts an element and a
+ * pseudo-class, so these repeat the class to win. */
+html[data-template='magasin-sondagsbilag'] .as-option.as-option:has(.lucide-check-circle),
+html[data-template='magasin-sondagsbilag'] .as-option.as-option:has(.lucide-minus-circle) {
 	background: var(--q-block);
 	color: var(--q-on-block);
 	box-shadow: none;
 }
-html[data-template='magasin-sondagsbilag'] .qz-options .as-option:has(.lucide-check-circle)::before,
-html[data-template='magasin-sondagsbilag'] .qz-options .as-option:has(.lucide-minus-circle)::before {
+html[data-template='magasin-sondagsbilag'] .qz-options .as-option.as-option:has(.lucide-check-circle)::before,
+html[data-template='magasin-sondagsbilag'] .qz-options .as-option.as-option:has(.lucide-minus-circle)::before {
 	background: var(--q-on-block);
 	color: var(--q-block);
 	box-shadow: none;
@@ -176,7 +178,7 @@ html[data-template='magasin-sondagsbilag'] .as-option .lucide-check-circle,
 html[data-template='magasin-sondagsbilag'] .as-option .lucide-minus-circle {
 	color: var(--q-on-block);
 }
-html[data-template='magasin-sondagsbilag'] .as-option:has(.lucide-x-circle) {
+html[data-template='magasin-sondagsbilag'] .as-option.as-option:has(.lucide-x-circle) {
 	box-shadow: inset 0 0 0 2px var(--sb-ink-2);
 }
 html[data-template='magasin-sondagsbilag'] .as-option:has(.lucide-x-circle) > span:not([class^='lucide-']) {
@@ -280,7 +282,7 @@ html[data-template='magasin-sondagsbilag'] .qz-result p.text-base {
 		border-inline-end: 0;
 		padding-top: 40px;
 	}
-	html[data-template='magasin-sondagsbilag'] .lsn-main > div {
+	html[data-template='magasin-sondagsbilag'] .lsn-main > :is(div, section) {
 		max-width: 760px;
 		margin-inline: auto;
 		padding-inline: 32px;
@@ -345,7 +347,7 @@ html[data-template='magasin-sondagsbilag'] .sls-title {
 	line-height: 0.96;
 	color: var(--sb-ink);
 }
-html[data-template='magasin-sondagsbilag'] .lsn-aside .chr-title {
+html[data-template='magasin-sondagsbilag'] .lsn-aside .sls-chapter {
 	font-family: var(--q-font-body);
 	font-weight: 700;
 	font-size: 11px;
@@ -354,15 +356,15 @@ html[data-template='magasin-sondagsbilag'] .lsn-aside .chr-title {
 	color: var(--sb-ink-2);
 	white-space: normal;
 }
-html[data-template='magasin-sondagsbilag'] .lsn-aside [data-testid='outline-lesson'] {
+html[data-template='magasin-sondagsbilag'] .lsn-aside .sls-lesson {
 	border-radius: 12px;
 	font-size: 15px;
 }
-html[data-template='magasin-sondagsbilag'] .lsn-aside [data-testid='outline-lesson'][data-active='true'] {
+html[data-template='magasin-sondagsbilag'] .lsn-aside .sls-lesson[data-active='true'] {
 	background: var(--q-block);
 	color: var(--q-on-block);
 }
-html[data-template='magasin-sondagsbilag'] .lsn-aside [data-testid='outline-lesson'][data-active='true'] * {
+html[data-template='magasin-sondagsbilag'] .lsn-aside .sls-lesson[data-active='true'] * {
 	color: inherit;
 }
 html[data-template='magasin-sondagsbilag'] .lsn-aside .lucide-check {

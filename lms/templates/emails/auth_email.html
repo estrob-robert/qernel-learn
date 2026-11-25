@@ -29,7 +29,9 @@
 		}
 		.qsb-content .email-body, .qsb-content > p, .qsb-content > div { padding: 0 44px; }
 		.qsb-content p { font-size: 17px; line-height: 1.6; margin: 0 0 16px; color: {{ qd.ink }}; }
-		.qsb-content .email-body { padding-top: 32px; }
+		/* Frappe's email stylesheet gives .email-body width: 100%; with the side
+		   padding it ran past the card's right edge. */
+		.qsb-content .email-body { padding-top: 32px; box-sizing: border-box !important; }
 		.qsb-content .email-action { margin: 28px 0 8px; }
 		.qsb-content .email-btn, .qsb-content a.btn, .qsb-content .btn-primary {
 			display: inline-block; background: {{ qd.block }}; color: {{ qd.on_block }} !important;

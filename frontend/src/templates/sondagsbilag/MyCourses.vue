@@ -63,7 +63,9 @@
 				</div>
 			</section>
 
-			<div class="mc-head">
+			<!-- The only course may already be the one to continue, above; then
+			     there is nothing more to list. -->
+			<div v-if="tiles.length || !data.courses.length" class="mc-head">
 				<h2 class="sb-cond">{{ __('My Courses') }}</h2>
 				<p v-if="data.courses.length" class="sb-quote">{{ summary }}</p>
 			</div>
@@ -72,7 +74,7 @@
 				{{ __('You have no courses yet.') }}
 			</p>
 
-			<section v-else class="mc-mosaic">
+			<section v-else-if="tiles.length" class="mc-mosaic">
 				<template v-for="(course, i) in tiles" :key="course.course">
 					<router-link
 						v-if="!course.completed"

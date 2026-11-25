@@ -33,16 +33,31 @@ const storedPreference = (): ThemePreference => {
 const resolve = (preference: ThemePreference): Theme =>
 	preference === 'system' ? (prefersDark() ? 'dark' : 'light') : preference
 
-const themePreference = ref<ThemePreference>(storedPreference())
+// Qernel Learn: a customer's template fixes light or dark for every learner
+// (lms/qernel_design.py). The server then renders <html data-theme="…"
+// data-theme-locked>, and nothing here may repaint it or offer a switch.
+const themeLocked: boolean =
+	typeof document !== 'undefined' &&
+	document.documentElement.hasAttribute('data-theme-locked')
+const lockedTheme = (): Theme =>
+	document.documentElement.getAttribute('data-theme') === 'dark'
+		? 'dark'
+		: 'light'
+
+const themePreference = ref<ThemePreference>(
+	themeLocked ? lockedTheme() : storedPreference()
+)
 const theme = ref<Theme>(resolve(themePreference.value))
 
 const paint = (resolved: Theme): void => {
+	if (themeLocked) return
 	document.documentElement.setAttribute('data-theme', resolved)
 	localStorage.setItem(RESOLVED_KEY, resolved)
 	theme.value = resolved
 }
 
 const setThemePreference = (preference: ThemePreference): void => {
+	if (themeLocked) return
 	themePreference.value = preference
 	localStorage.setItem(PREFERENCE_KEY, preference)
 	paint(resolve(preference))
@@ -53,7 +68,7 @@ const setThemePreference = (preference: ThemePreference): void => {
 // under a tri-state preference would rewrite a 'system' choice into a concrete
 // light/dark on every load. Painting here also removes the flash of the wrong
 // theme between first paint and that component mounting.
-if (typeof document !== 'undefined') {
+if (typeof document !== 'undefined' && !themeLocked) {
 	// paint(), not a bare setAttribute: `theme` is the resolved key index.html
 	// falls back to, and on a load where the user never touches the theme control
 	// nothing else writes it.
@@ -76,4 +91,4 @@ if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
 		})
 }
 
-export { setThemePreference, theme, themePreference }
+export { setThemePreference, theme, themeLocked, themePreference }

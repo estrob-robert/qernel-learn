@@ -1,6 +1,8 @@
 @import 'frappe-ui/style.css';
 @import './styles/blockEditor.css';
 @import './styles/qernel.css';
+/* Qernel Learn templates: scoped to html[data-template=…], inert elsewhere. */
+@import './templates/sondagsbilag/sondagsbilag.css';
 
 /* frappe-ui paints no document background, so dark mode showed the UA's white
    wherever no element covers the canvas. Precedent: helpdesk/desk/src/index.css. */

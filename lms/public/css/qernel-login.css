@@ -1,0 +1,174 @@
+/* Qernel Learn: Frappe's /login in the Søndagsbilag template (lms/www/login.html).
+ * Only loaded when the site has a template; the colours and fonts come from
+ * <style id="qernel-design"> (lms/qernel_design.py). Frappe's markup is kept
+ * as it is, so its login.js keeps working; this only restyles it. */
+
+html[data-template='magasin-sondagsbilag'] body {
+	background: var(--q-block) !important;
+	color: var(--q-on-block);
+	font-family: var(--q-font-body);
+}
+html[data-template='magasin-sondagsbilag'][data-theme='dark'] body {
+	background: oklch(from var(--q-block) 0.165 0.018 h) !important;
+}
+html[data-template='magasin-sondagsbilag'] .navbar,
+html[data-template='magasin-sondagsbilag'] .web-footer,
+html[data-template='magasin-sondagsbilag'] footer {
+	display: none !important;
+}
+html[data-template='magasin-sondagsbilag'] .page-content-wrapper,
+html[data-template='magasin-sondagsbilag'] .page_content,
+html[data-template='magasin-sondagsbilag'] main,
+html[data-template='magasin-sondagsbilag'] .container {
+	background: transparent !important;
+	max-width: none !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.qsb-login {
+	min-height: 100dvh;
+	box-sizing: border-box;
+	max-width: 520px;
+	margin: 0 auto;
+	padding: 28px 22px 26px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	color: var(--q-on-block);
+}
+.qsb-login-head {
+	order: 1;
+}
+.qsb-cond {
+	font-family: var(--q-font-heading);
+	font-stretch: 62%;
+	font-weight: 900;
+	text-transform: uppercase;
+	line-height: 0.92;
+	font-size: clamp(56px, 16vw, 96px);
+	margin: 22px 0 14px;
+	color: inherit;
+	overflow-wrap: normal;
+}
+html[data-template='magasin-sondagsbilag'][data-theme='dark'] .qsb-cond {
+	color: var(--q-accent);
+}
+.qsb-quote {
+	font-family: var(--q-font-accent);
+	font-style: italic;
+	font-size: 21px;
+	line-height: 1.3;
+	margin: 0 0 26px;
+}
+.qsb-powered {
+	order: 3;
+	align-self: center;
+	margin-top: 28px;
+	font-weight: 700;
+	font-size: 11px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: inherit !important;
+	opacity: 0.8;
+	text-decoration: none;
+}
+
+/* Frappe's sections, as they sit in the page. */
+.qsb-login > div {
+	order: 2;
+}
+.qsb-login .page-card {
+	background: transparent !important;
+	border: 0 !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+	max-width: none !important;
+	margin: 0 !important;
+	color: inherit;
+}
+/* The customer's logo stays, top left; Frappe's own title and subtitle give way
+ * to the template's heading above. */
+.qsb-login .page-card-head {
+	position: fixed;
+	top: 18px;
+	left: max(22px, calc(50vw - 238px));
+}
+.qsb-login .page-card-head-text {
+	display: none !important;
+}
+.qsb-login .app-logo {
+	max-height: 40px;
+	max-width: 160px;
+	width: auto;
+	object-fit: contain;
+}
+.qsb-login label {
+	color: inherit !important;
+	font-weight: 700;
+	font-size: 11px !important;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+.qsb-login .form-control {
+	height: 56px !important;
+	border-radius: 14px !important;
+	border: 0 !important;
+	padding: 0 18px !important;
+	font-size: 17px !important;
+	background: color-mix(in oklch, var(--q-on-block) 14%, transparent) !important;
+	color: var(--q-on-block) !important;
+	box-shadow: none !important;
+}
+.qsb-login .form-control::placeholder {
+	color: color-mix(in oklch, var(--q-on-block) 65%, transparent);
+}
+.qsb-login .es-button {
+	min-height: 56px !important;
+	border-radius: 999px !important;
+	font-family: var(--q-font-heading);
+	font-stretch: 75%;
+	font-weight: 800 !important;
+	font-size: 15px !important;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+}
+.qsb-login .es-button[data-variant='solid'] {
+	background: var(--q-on-block) !important;
+	color: var(--q-block) !important;
+	border: 0 !important;
+}
+html[data-template='magasin-sondagsbilag'][data-theme='dark'] .qsb-login .es-button[data-variant='solid'] {
+	background: var(--q-block) !important;
+	color: var(--q-on-block) !important;
+}
+.qsb-login .btn-login-option {
+	background: transparent !important;
+	color: inherit !important;
+	border: 0 !important;
+	text-transform: none;
+	font-family: var(--q-font-body);
+	font-stretch: normal;
+	letter-spacing: 0;
+	font-size: 14px !important;
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	min-height: 44px !important;
+}
+.qsb-login a,
+.qsb-login .text-ink-gray-5,
+.qsb-login .text-ink-gray-6,
+.qsb-login .resend-link {
+	color: inherit !important;
+}
+.qsb-login .field-error {
+	color: inherit !important;
+	font-weight: 600;
+}
+.qsb-login :focus-visible {
+	outline: 3px solid var(--q-on-block) !important;
+	outline-offset: 3px;
+}

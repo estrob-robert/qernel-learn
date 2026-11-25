@@ -3,8 +3,8 @@
 	<svg viewBox="112 125 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<defs>
 			<mask :id="maskId">
-				<rect x="0" y="0" width="1000" height="1000" fill="#FFFFFF" />
-				<rect x="265" y="305" width="430" height="320" rx="85" ry="85" fill="#000000" />
+				<rect x="0" y="0" width="1000" height="1000" fill="white" />
+				<rect x="265" y="305" width="430" height="320" rx="85" ry="85" fill="black" />
 			</mask>
 		</defs>
 		<g :mask="`url(#${maskId})`" :class="mono ? 'fill-current' : 'lms-logo-mark'">

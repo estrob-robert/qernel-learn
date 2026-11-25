@@ -1,6 +1,12 @@
 {#- Qernel Learn: Frappe's templates/emails/auth_email.html (v16.60.2), with the
     brand logo at the bottom centred. lms is searched before frappe, so this
-    copy wins. Compare with Frappe's after an upgrade. -#}
+    copy wins. Compare with Frappe's after an upgrade.
+
+    On a site with a template (lms/qernel_design.py, email_design) the frame is
+    the template's instead: the customer's colour as the title band, their logo
+    on top, their name and "Powered by Qernel" at the foot. The content blocks
+    (header, content, footer) are Frappe's either way. -#}
+{%- set qd = email_design() -%}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -10,8 +16,82 @@
 	<meta name="color-scheme" content="light" />
 	<meta name="supported-color-schemes" content="light" />
 	<title>{{ subject or "" }}</title>
+	{%- if qd %}
+	<style>
+		@font-face { font-family: 'Archivo'; font-weight: 400 900; font-stretch: 62% 125%; src: url('{{ qd.site_url }}/assets/lms/fonts/archivo/archivo-normal-latin.woff2') format('woff2'); }
+		@font-face { font-family: 'Bodoni Moda'; font-style: italic; font-weight: 400 700; src: url('{{ qd.site_url }}/assets/lms/fonts/bodoni-moda/bodoni-moda-italic-latin.woff2') format('woff2'); }
+		.qsb-body { margin: 0; padding: 0; background: #ebe7e9; }
+		.qsb-card { width: 100%; max-width: 600px; background: {{ qd.page }}; color: {{ qd.ink }}; font-family: 'Archivo', Arial, sans-serif; }
+		.qsb-content h1, .qsb-content .email-title {
+			margin: 0; padding: 40px 44px 40px; background: {{ qd.block }}; color: {{ qd.on_block }};
+			font-family: 'Archivo', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif; font-stretch: 62%;
+			font-weight: 900; text-transform: uppercase; font-size: 44px; line-height: 1; letter-spacing: 0;
+		}
+		.qsb-content .email-body, .qsb-content > p, .qsb-content > div { padding: 0 44px; }
+		.qsb-content p { font-size: 17px; line-height: 1.6; margin: 0 0 16px; color: {{ qd.ink }}; }
+		.qsb-content .email-body { padding-top: 32px; }
+		.qsb-content .email-action { margin: 28px 0 8px; }
+		.qsb-content .email-btn, .qsb-content a.btn, .qsb-content .btn-primary {
+			display: inline-block; background: {{ qd.block }}; color: {{ qd.on_block }} !important;
+			border-radius: 999px; padding: 18px 32px; text-decoration: none;
+			font-family: 'Archivo', Arial, sans-serif; font-weight: 800; font-size: 15px;
+			letter-spacing: 0.05em; text-transform: uppercase;
+		}
+		.qsb-content a { color: {{ qd.accent }}; }
+		.qsb-content .email-copy, .qsb-content .email-ignore { font-size: 14px; color: #6b5b64; }
+		.qsb-content .email-copy p, .qsb-content .email-ignore { font-size: 14px; }
+		.qsb-foot { padding: 24px 44px 28px; font-size: 13px; line-height: 1.6; color: #6b5b64; border-top: 1px solid #ddd3d8; }
+		.qsb-foot a { color: #6b5b64; }
+		.qsb-label { font-weight: 700; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+	</style>
+	{%- endif %}
 </head>
 
+{%- if qd %}
+<body class="qsb-body">
+	<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ebe7e9;">
+		<tr>
+			<td align="center" valign="top" style="padding: 28px 12px 40px;">
+				<!--[if mso]><table role="presentation" align="center" width="600" border="0" cellpadding="0" cellspacing="0"><tr><td><![endif]-->
+				<table role="presentation" class="qsb-card" width="600" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td align="center" style="padding: 26px 0;">
+							<a href="{{ qd.site_url }}" style="text-decoration:none;">
+								{% if qd.logo %}
+								<img src="{{ qd.logo }}" alt="{{ qd.name | e }}" style="max-height:44px; max-width:180px; border:0;" />
+								{% else %}
+								<span class="qsb-label">{{ qd.name | e }}</span>
+								{% endif %}
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td class="qsb-content" style="padding-bottom: 28px;">
+							{{ header or "" }}
+							{{ content }}
+						</td>
+					</tr>
+					<tr>
+						<td class="qsb-foot">
+							<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+								<tr>
+									<td style="font-size:13px; color:#6b5b64;">{{ qd.name | e }}</td>
+									<td align="right" class="qsb-label" style="color:#6b5b64;">
+										<a href="https://qernel.one/?utm_source=powered_by&utm_medium=referral&utm_content=learn_email" style="color:#6b5b64; text-decoration:none;">Powered by Qernel</a>
+									</td>
+								</tr>
+							</table>
+							<div data-email-footer="true">{{ footer }}</div>
+							<div class="print-html">{{ print_html or "" }}</div>
+						</td>
+					</tr>
+				</table>
+				<!--[if mso]></td></tr></table><![endif]-->
+			</td>
+		</tr>
+	</table>
+</body>
+{%- else %}
 <body>
 	<table class="body-table auth-email" cellpadding="0" cellspacing="0">
 		<tr>
@@ -44,5 +124,6 @@
 		</tr>
 	</table>
 </body>
+{%- endif %}
 
 </html>

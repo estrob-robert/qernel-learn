@@ -105,6 +105,8 @@ const textUses = (source: string) => {
 }
 
 const sources = (readdirSync(SRC, { recursive: true }) as string[])
+	// Forward slashes on every platform: readdirSync gives backslashes on Windows.
+	.map((f) => f.replace(/\\/g, '/'))
 	.filter((f) => /\.(vue|ts|js)$/.test(f) && !f.startsWith('tests/'))
 	.sort()
 

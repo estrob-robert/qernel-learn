@@ -29,6 +29,13 @@ import ContinueCoursePanel from '@/components/ContinueCoursePanel.vue'
 import { showHelpModal } from '@framework/ui/components/Onboarding/index'
 import { seesOnboarding } from '@/utils/onboarding'
 import { usersStore } from '@/stores/user'
+import { activeTemplate, useTemplateScreens } from '@/templates'
+import SondagsbilagShell from '@/templates/sondagsbilag/Shell.vue'
+
+// Qernel Learn: a customer's template brings its own shell for learners
+// (src/templates). Staff keep Frappe's layouts below.
+const templateShells = { 'magasin-sondagsbilag': SondagsbilagShell }
+const templateScreens = useTemplateScreens()
 
 const { isMobile } = useScreenSize()
 const route = useRoute()
@@ -67,6 +74,9 @@ const noSidebar = computed(
 const Layout = computed(() => {
 	if (noSidebar.value) {
 		return NoSidebarLayout
+	}
+	if (templateScreens.value && activeTemplate) {
+		return templateShells[activeTemplate]
 	}
 	if (isMobile.value) {
 		return MobileLayout

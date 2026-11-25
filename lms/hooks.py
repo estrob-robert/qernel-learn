@@ -406,6 +406,8 @@ for _doctype, _events in _qernel_doc_events.items():
 assert "welcome_email" not in globals()
 welcome_email = ["lms.qernel.welcome_title"]
 jinja["methods"].append("lms.qernel.welcome_title")
+# Qernel Learn: the customer's template in the email frames, lms/qernel_design.py.
+jinja["methods"].append("lms.qernel_design.email_design")
 
 # Qernel Learn: indexes the progress poll reads by, see lms.qernel.learner_progress.
 after_migrate.append("lms.qernel.add_indexes")

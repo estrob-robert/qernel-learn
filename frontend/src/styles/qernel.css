@@ -9,12 +9,14 @@
 
    The same orange in light and dark mode, as in Qernel. */
 
+/* token-exempt-start: Qernel's brand orange, the same in both themes by definition */
 :root {
 	--qernel-brand: #ff6b35;
 	--qernel-brand-hover: #ed5a24;
 	--qernel-brand-active: #d64e1c;
 	--qernel-brand-ink: #2b1206; /* text on orange, about 6:1 */
 }
+/* token-exempt-end */
 
 /* Solid buttons, and switches and checkboxes that are on (all buttons in frappe-ui). */
 button.bg-surface-gray-10,

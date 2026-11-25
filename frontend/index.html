@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ boot.lang }}" dir="{{ boot.text_direction }}">
+<html lang="{{ boot.lang }}" dir="{{ boot.text_direction }}"{% if design %} data-template="{{ design.template }}" data-theme="{{ design.theme }}" data-theme-locked{% endif %}>
 	<head>
 		<meta charset="UTF-8" />
+		{% if design %}<style id="qernel-design">{{ design.css }}</style>{% endif %}
 		<script>
 			/* The document is painted from --surface-base, which only resolves to
 			   the dark value once <html data-theme="dark"> exists. src/utils/theme.ts
@@ -15,6 +16,9 @@
 			   cannot render it into <html> the way frappe/www/desk.html does.
 			   Keep these rules in step with src/utils/theme.ts —
 			   src/tests/themeBootstrap.test.ts asserts the two agree. */
+			/* Qernel Learn: a customer's template fixes the theme server-side
+			   (data-theme-locked, lms/qernel_design.py); leave it as rendered. */
+			if (!document.documentElement.hasAttribute('data-theme-locked'))
 			try {
 				var preference = localStorage.getItem('themePreference')
 				if (

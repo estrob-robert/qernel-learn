@@ -191,7 +191,7 @@
 					</Tooltip>
 					<Tooltip :text="__('Powered by Qernel')">
 						<a
-							:href="poweredByUrl()"
+							:href="safeUrl(poweredByUrl())"
 							v-external
 							class="flex"
 							:aria-label="__('Powered by Qernel')"
@@ -256,6 +256,7 @@ import { Button, call, ScrollArea, Tooltip, toast } from 'frappe-ui'
 import PageModal from '@/components/Modals/PageModal.vue'
 import LMSLogo from '@/components/Icons/LMSLogo.vue'
 import { APP_NAME, HELP_URL, poweredByUrl } from '@/utils/brand'
+import { safeUrl } from '@/utils/safeUrl'
 import { useRouter } from 'vue-router'
 import { openFormRoute } from '@/composables/useFormRoute'
 import {

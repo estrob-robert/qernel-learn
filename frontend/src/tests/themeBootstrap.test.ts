@@ -73,6 +73,8 @@ const bootstrapSource = (): string => {
 type Scenario = {
 	stored: Record<string, string>
 	systemDark: boolean
+	// Qernel Learn: the server rendered a customer's template with its theme.
+	locked?: boolean
 }
 
 const mediaQueryList = (query: string, systemDark: boolean) => ({
@@ -83,13 +85,19 @@ const mediaQueryList = (query: string, systemDark: boolean) => ({
 
 // Runs the real inline script against a stand-in document, and reports the
 // data-theme it set — or null when it set none.
-const runBootstrap = ({ stored, systemDark }: Scenario): string | null => {
+const runBootstrap = ({
+	stored,
+	systemDark,
+	locked = false,
+}: Scenario): string | null => {
 	let attribute: string | null = null
 	const documentStub = {
 		documentElement: {
 			setAttribute: (name: string, value: string) => {
 				if (name === 'data-theme') attribute = value
 			},
+			hasAttribute: (name: string) =>
+				locked && name === 'data-theme-locked',
 		},
 	}
 	const windowStub = {
@@ -183,6 +191,30 @@ describe('the theme applied before first paint', () => {
 
 		for (const scenario of scenarios) {
 			expect(runBootstrap(scenario)).toBe(await runComposable(scenario))
+		}
+	})
+
+	// Qernel Learn: a customer's template fixes the theme on the server
+	// (lms/qernel_design.py). Neither copy of the rules may repaint it.
+	it('leaves a theme the server locked alone', () => {
+		expect(
+			runBootstrap({ stored: { themePreference: 'dark' }, systemDark: true, locked: true })
+		).toBeNull()
+	})
+
+	it('keeps the locked theme in src/utils/theme.ts too', async () => {
+		document.documentElement.setAttribute('data-theme', 'light')
+		document.documentElement.setAttribute('data-theme-locked', '')
+		try {
+			localStorage.setItem('themePreference', 'dark')
+			vi.resetModules()
+			const module = await import('../utils/theme')
+			expect(module.themeLocked).toBe(true)
+			expect(module.theme.value).toBe('light')
+			module.setThemePreference('dark')
+			expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+		} finally {
+			document.documentElement.removeAttribute('data-theme-locked')
 		}
 	})
 

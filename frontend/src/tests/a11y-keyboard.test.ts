@@ -196,8 +196,11 @@ describe('AppSidebar', () => {
 			'button'
 		)
 		expect(
-			wrapper.get('a[aria-label="Powered by Frappe Learning"]').attributes()
-		).toMatchObject({ href: 'https://frappe.io/learning', target: '_blank' })
+			wrapper.get('a[aria-label="Powered by Qernel"]').attributes()
+		).toMatchObject({
+			href: expect.stringContaining('https://qernel.one/'),
+			target: '_blank',
+		})
 		expect(wrapper.find('.sr-only').text()).toContain(
 			'This site is being updated'
 		)

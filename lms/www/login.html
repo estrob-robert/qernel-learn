@@ -1,0 +1,34 @@
+{#- Qernel Learn: Frappe's login page in the customer's template. See login.py. -#}
+{% extends "frappe/www/login.html" %}
+
+{% block head_include %}
+{{ super() }}
+{% if design %}
+<style id="qernel-design">{{ design.css }}</style>
+<link rel="stylesheet" href="/assets/lms/css/qernel-login.css">
+<script>
+	document.documentElement.setAttribute('data-template', '{{ design.template }}')
+	document.documentElement.setAttribute('data-theme', '{{ design.theme }}')
+	// Customer sites sign in with a link by email first; the password form is
+	// one tap away. Frappe's login.js picks the section from the hash.
+	if (!window.location.hash) {
+		history.replaceState(null, '', window.location.pathname + window.location.search + '#login-with-email-link')
+	}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block page_content %}
+{% if design %}
+<div class="qsb-login">
+	<div class="qsb-login-head">
+		<h1 class="qsb-cond">{{ _("Welcome back") }}</h1>
+		<p class="qsb-quote">{{ _("Your courses are waiting where you left off.") }}</p>
+	</div>
+	{{ super() }}
+	<a class="qsb-powered" href="https://qernel.one/?utm_source=powered_by&utm_medium=referral&utm_content=learn_login" target="_blank" rel="noopener">Powered by Qernel</a>
+</div>
+{% else %}
+{{ super() }}
+{% endif %}
+{% endblock %}

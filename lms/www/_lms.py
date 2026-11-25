@@ -33,6 +33,14 @@ def get_context():
 	context.title = title
 	context.favicon = favicon
 
+	# Qernel Learn: the customer's template, theme, colours and fonts, painted
+	# before the app loads (lms/qernel_design.py). None keeps Frappe's own look.
+	from lms.qernel_design import page_design
+
+	context.design = page_design()
+	if context.design:
+		context.boot.design = context.design.boot
+
 	capture("active_site", "lms")
 	return context
 

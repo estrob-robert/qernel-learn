@@ -4,11 +4,32 @@
 // tests able to assert against the REAL route table via `createRouter` with a
 // memory history, rather than a copy that could drift from what router.js
 // actually registers.
+import { templated } from '@/templates/route'
+
 export const routes = [
 	{
 		path: '/',
 		name: 'Home',
-		component: () => import('@/pages/Home/Home.vue'),
+		// Qernel Learn: a template's "My courses" for learners (src/templates).
+		component: templated(
+			{
+				'magasin-sondagsbilag': () =>
+					import('@/templates/sondagsbilag/MyCourses.vue'),
+			},
+			() => import('@/pages/Home/Home.vue')
+		),
+	},
+	{
+		path: '/results',
+		name: 'QernelResults',
+		// Qernel Learn: quiz results and assignment feedback, reached from More.
+		component: templated(
+			{
+				'magasin-sondagsbilag': () =>
+					import('@/templates/sondagsbilag/Results.vue'),
+			},
+			() => import('@/pages/NotFound.vue')
+		),
 	},
 	{
 		path: '/courses',
@@ -36,7 +57,13 @@ export const routes = [
 	{
 		path: '/courses/:courseName',
 		name: 'CourseDetail',
-		component: () => import('@/pages/Courses/CourseDetail.vue'),
+		component: templated(
+			{
+				'magasin-sondagsbilag': () =>
+					import('@/templates/sondagsbilag/CoursePage.vue'),
+			},
+			() => import('@/pages/Courses/CourseDetail.vue')
+		),
 		props: true,
 		children: [
 			{

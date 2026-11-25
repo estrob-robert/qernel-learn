@@ -1,6 +1,17 @@
 <template>
 	<div v-if="lesson.data" class="">
-		<PageHeader :breadcrumbs="breadcrumbs">
+		<!-- Qernel Learn: a template's lesson head for learners (src/templates). -->
+		<SondagsbilagLessonBand
+			v-if="templateScreens && activeTemplate === 'magasin-sondagsbilag'"
+			:courseName="courseName"
+			:courseTitle="lesson.data.course_title"
+			:chapterTitle="lesson.data.chapter_title"
+			:chapterNumber="chapterNumber"
+			:lessonNumber="lessonNumber"
+			:title="lesson.data.title"
+			:progress="lessonProgress"
+		/>
+		<PageHeader v-else :breadcrumbs="breadcrumbs">
 			<template #actions>
 				<CertificationLinks :courseName="courseName" />
 				<HeaderButton
@@ -119,7 +130,10 @@
 							class="flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center justify-between"
 						>
 							<div class="flex flex-col">
-								<h1 class="text-4xl-semibold text-ink-gray-9">
+								<h1
+									v-if="!templateScreens"
+									class="text-4xl-semibold text-ink-gray-9"
+								>
 									{{ lesson.data.title }}
 								</h1>
 
@@ -404,6 +418,8 @@ import LessonNavButtons from '@/components/LessonNavButtons.vue'
 import StudentLessonSidebar from '@/components/StudentLessonSidebar.vue'
 import BottomSheet from '@/components/BottomSheet.vue'
 import PageHeader from '@/components/Layouts/PageHeader.vue'
+import SondagsbilagLessonBand from '@/templates/sondagsbilag/LessonBand.vue'
+import { activeTemplate, useTemplateScreens } from '@/templates'
 import HeaderButton from '@/components/HeaderButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Notes from '@/components/Notes/Notes.vue'
@@ -538,6 +554,7 @@ const currentTab = ref<string | undefined>(undefined)
 const completedLesson = ref<string | null>(null)
 const settingsStore = useSettings()
 const { isMobile } = useScreenSize()
+const templateScreens = useTemplateScreens()
 const showChapters = ref(false)
 let timerInterval: ReturnType<typeof setInterval> | undefined
 

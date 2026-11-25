@@ -1,0 +1,213 @@
+/* Qernel Learn template: Magasin / Søndagsbilag ("the bold supplement").
+ *
+ * Everything is scoped under html[data-template='magasin-sondagsbilag'], which
+ * only the server renders (lms/qernel_design.py), so a site without this
+ * template never sees a rule from this file.
+ *
+ * The customer's colour and fonts come from <style id="qernel-design">:
+ *   --q-block     a surface in the customer's colour
+ *   --q-on-block  text on that surface
+ *   --q-accent    the customer's colour as text or a mark on the page
+ *   --q-font-heading, --q-font-body, --q-font-accent
+ * All are worked out for contrast on the server (lms/qernel_color.py).
+ *
+ * The first half re-tints frappe-ui's own tokens, so every Frappe screen a
+ * learner or a course creator meets (forms, dialogs, the lesson, the quiz)
+ * takes the template's paper, ink and colour. The tint is the customer's hue
+ * (oklch relative colour); a browser without relative colours keeps
+ * frappe-ui's greys, which still work. */
+
+html[data-template='magasin-sondagsbilag'] {
+	font-family: var(--q-font-body);
+	--qernel-brand: var(--q-block);
+	--qernel-brand-hover: color-mix(in oklch, var(--q-block) 88%, black);
+	--qernel-brand-active: color-mix(in oklch, var(--q-block) 78%, black);
+	--qernel-brand-ink: var(--q-on-block);
+}
+
+html[data-template='magasin-sondagsbilag'][data-theme='light'] {
+	--sb-page: oklch(from var(--q-block) 0.972 0.006 h);
+	--sb-paper: oklch(from var(--q-block) 0.99 0.004 h);
+	--sb-tint: color-mix(in oklch, var(--q-block) 9%, var(--sb-page));
+	--sb-ink: oklch(from var(--q-block) 0.2 0.02 h);
+	--sb-ink-2: oklch(from var(--q-block) 0.44 0.02 h);
+	--sb-rule: oklch(from var(--q-block) 0.86 0.01 h);
+	--sb-inverse: var(--sb-ink);
+	--sb-on-inverse: oklch(from var(--q-block) 0.965 0.01 h);
+
+	--surface-base: var(--sb-page);
+	--surface-gray-1: oklch(from var(--q-block) 0.96 0.006 h);
+	--surface-gray-2: oklch(from var(--q-block) 0.946 0.007 h);
+	--surface-gray-3: oklch(from var(--q-block) 0.928 0.008 h);
+	--surface-gray-4: oklch(from var(--q-block) 0.9 0.009 h);
+	--surface-gray-5: oklch(from var(--q-block) 0.83 0.01 h);
+	--surface-gray-6: oklch(from var(--q-block) 0.683 0.012 h);
+	--surface-gray-7: oklch(from var(--q-block) 0.586 0.014 h);
+	--surface-gray-8: oklch(from var(--q-block) 0.439 0.016 h);
+	--surface-gray-9: oklch(from var(--q-block) 0.341 0.018 h);
+	--surface-gray-10: var(--q-block);
+	--surface-sidebar: var(--sb-page);
+	--surface-elevation-1: var(--sb-paper);
+	--surface-elevation-2: var(--sb-paper);
+	--surface-elevation-3: var(--sb-paper);
+	--ink-base: var(--q-on-block);
+	--ink-gray-1: oklch(from var(--q-block) 0.946 0.008 h);
+	--ink-gray-2: oklch(from var(--q-block) 0.913 0.01 h);
+	--ink-gray-3: oklch(from var(--q-block) 0.83 0.012 h);
+	--ink-gray-4: oklch(from var(--q-block) 0.683 0.014 h);
+	--ink-gray-5: oklch(from var(--q-block) 0.56 0.016 h);
+	--ink-gray-6: var(--sb-ink-2);
+	--ink-gray-7: oklch(from var(--q-block) 0.33 0.02 h);
+	--ink-gray-8: oklch(from var(--q-block) 0.24 0.02 h);
+	--ink-gray-9: var(--sb-ink);
+	--outline-gray-1: oklch(from var(--q-block) 0.93 0.008 h);
+	--outline-gray-2: var(--sb-rule);
+	--outline-gray-3: oklch(from var(--q-block) 0.8 0.012 h);
+	--outline-gray-4: oklch(from var(--q-block) 0.683 0.014 h);
+	--outline-gray-5: oklch(from var(--q-block) 0.586 0.016 h);
+	--outline-elevation-1: var(--sb-rule);
+	--outline-elevation-2: var(--sb-rule);
+}
+
+html[data-template='magasin-sondagsbilag'][data-theme='dark'] {
+	--sb-page: oklch(from var(--q-block) 0.165 0.018 h);
+	--sb-paper: oklch(from var(--q-block) 0.205 0.02 h);
+	--sb-tint: color-mix(in oklch, var(--q-block) 24%, var(--sb-page));
+	--sb-ink: oklch(from var(--q-block) 0.94 0.012 h);
+	--sb-ink-2: oklch(from var(--q-block) 0.75 0.015 h);
+	--sb-rule: oklch(from var(--q-block) 0.32 0.015 h);
+	--sb-inverse: var(--sb-ink);
+	--sb-on-inverse: var(--sb-page);
+
+	--surface-base: var(--sb-page);
+	--surface-gray-1: oklch(from var(--q-block) 0.2 0.018 h);
+	--surface-gray-2: oklch(from var(--q-block) 0.24 0.018 h);
+	--surface-gray-3: oklch(from var(--q-block) 0.29 0.018 h);
+	--surface-gray-4: oklch(from var(--q-block) 0.34 0.018 h);
+	--surface-gray-5: oklch(from var(--q-block) 0.43 0.018 h);
+	--surface-gray-6: oklch(from var(--q-block) 0.58 0.016 h);
+	--surface-gray-7: oklch(from var(--q-block) 0.683 0.014 h);
+	--surface-gray-8: oklch(from var(--q-block) 0.754 0.012 h);
+	--surface-gray-9: oklch(from var(--q-block) 0.885 0.01 h);
+	--surface-gray-10: var(--q-block);
+	--surface-sidebar: var(--sb-page);
+	--surface-elevation-1: var(--sb-paper);
+	--surface-elevation-2: oklch(from var(--q-block) 0.225 0.02 h);
+	--surface-elevation-3: oklch(from var(--q-block) 0.26 0.02 h);
+	--ink-base: var(--q-on-block);
+	--ink-gray-1: oklch(from var(--q-block) 0.26 0.015 h);
+	--ink-gray-2: oklch(from var(--q-block) 0.34 0.015 h);
+	--ink-gray-3: oklch(from var(--q-block) 0.38 0.015 h);
+	--ink-gray-4: oklch(from var(--q-block) 0.58 0.014 h);
+	--ink-gray-5: oklch(from var(--q-block) 0.62 0.014 h);
+	--ink-gray-6: var(--sb-ink-2);
+	--ink-gray-7: oklch(from var(--q-block) 0.8 0.012 h);
+	--ink-gray-8: oklch(from var(--q-block) 0.885 0.012 h);
+	--ink-gray-9: var(--sb-ink);
+	--outline-gray-1: oklch(from var(--q-block) 0.26 0.015 h);
+	--outline-gray-2: var(--sb-rule);
+	--outline-gray-3: oklch(from var(--q-block) 0.38 0.015 h);
+	--outline-gray-4: oklch(from var(--q-block) 0.457 0.015 h);
+	--outline-gray-5: oklch(from var(--q-block) 0.58 0.014 h);
+	--outline-elevation-1: var(--sb-rule);
+	--outline-elevation-2: oklch(from var(--q-block) 0.36 0.015 h);
+}
+
+/* ------------------------------------------------------------ type */
+
+/* Narrow bold capitals: the template's voice. Line height stays at or above
+ * 0.92 so the ring of Å never touches the line above (Robert 24.11). */
+html[data-template='magasin-sondagsbilag'] .sb-cond {
+	font-family: var(--q-font-heading);
+	font-stretch: 62%;
+	font-weight: 900;
+	text-transform: uppercase;
+	line-height: 0.94;
+	letter-spacing: -0.005em;
+	overflow-wrap: normal;
+	hyphens: none;
+}
+
+html[data-template='magasin-sondagsbilag'] .sb-quote {
+	font-family: var(--q-font-accent);
+	font-style: italic;
+	font-weight: 400;
+}
+
+html[data-template='magasin-sondagsbilag'] .sb-label {
+	font-family: var(--q-font-body);
+	font-weight: 700;
+	font-size: 11px;
+	line-height: 1.2;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+html[data-template='magasin-sondagsbilag'] .sb-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-height: 52px;
+	border-radius: 999px;
+	padding: 0 26px;
+	font-family: var(--q-font-heading);
+	font-stretch: 75%;
+	font-weight: 800;
+	font-size: 15px;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s;
+}
+html[data-template='magasin-sondagsbilag'] .sb-pill:hover {
+	transform: translateX(3px);
+}
+html[data-template='magasin-sondagsbilag'] .sb-pill--block {
+	background: var(--q-block);
+	color: var(--q-on-block);
+}
+html[data-template='magasin-sondagsbilag'] .sb-pill--on-block {
+	background: var(--q-on-block);
+	color: var(--q-block);
+}
+html[data-template='magasin-sondagsbilag'] .sb-pill--outline {
+	background: transparent;
+	color: var(--q-accent);
+	box-shadow: inset 0 0 0 2px var(--q-accent);
+}
+
+html[data-template='magasin-sondagsbilag'] .sb-track {
+	height: 8px;
+	border-radius: 99px;
+	overflow: hidden;
+	background: var(--sb-rule);
+}
+html[data-template='magasin-sondagsbilag'] .sb-track > i {
+	display: block;
+	height: 100%;
+	border-radius: 99px;
+	background: var(--q-block);
+	transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html[data-template='magasin-sondagsbilag'] .sb-on-block .sb-track {
+	background: color-mix(in oklch, var(--q-on-block) 25%, transparent);
+}
+html[data-template='magasin-sondagsbilag'] .sb-on-block .sb-track > i {
+	background: var(--q-on-block);
+}
+
+html[data-template='magasin-sondagsbilag'] .sb-on-block {
+	background: var(--q-block);
+	color: var(--q-on-block);
+}
+
+html[data-template='magasin-sondagsbilag'] :focus-visible {
+	outline-color: var(--q-accent);
+}
+
+/* ------------------------------------------------------------ Frappe's own screens */
+
+/* Page titles in Frappe's headers speak the template's voice too. */
+html[data-template='magasin-sondagsbilag'] main h1 {
+	font-family: var(--q-font-heading);
+}

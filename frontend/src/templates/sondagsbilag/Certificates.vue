@@ -156,6 +156,8 @@ usePageMeta(() => ({
 /* The certificate as a sheet of paper: warm, not the page's colour, so it
  * reads as the thing you download. */
 .ct-cert {
+	/* Paper in dark mode too, so the light theme's accent (lms/qernel_design.py). */
+	--ct-accent: var(--q-accent-paper, var(--q-accent));
 	--ct-paper: oklch(0.975 0.008 80);
 	--ct-ink: oklch(0.22 0.015 50);
 	--ct-ink-2: oklch(0.45 0.016 55);
@@ -168,7 +170,7 @@ usePageMeta(() => ({
 	min-width: 0;
 }
 .ct-cert-in {
-	border: 1px solid color-mix(in oklch, var(--q-accent) 55%, var(--ct-paper));
+	border: 1px solid color-mix(in oklch, var(--ct-accent) 55%, var(--ct-paper));
 	padding: 30px 32px 28px;
 	text-align: center;
 }
@@ -181,11 +183,11 @@ usePageMeta(() => ({
 }
 .ct-logo-text {
 	font-size: 24px;
-	color: var(--q-accent);
+	color: var(--ct-accent);
 	margin-bottom: 16px;
 }
 .ct-k {
-	color: var(--q-accent);
+	color: var(--ct-accent);
 }
 .ct-s {
 	font-size: 17px;
@@ -195,7 +197,7 @@ usePageMeta(() => ({
 .ct-name {
 	font-size: clamp(44px, 5vw, 68px);
 	margin: 0;
-	color: var(--q-accent);
+	color: var(--ct-accent);
 	overflow-wrap: anywhere;
 }
 .ct-course {

@@ -923,7 +923,10 @@ def design_css(profile: dict, template: dict, inline: bool = False) -> str:
 		family, face = _family(chosen or {"id": template["fonts"][role]}, inline)
 		families[role] = family
 		faces.extend(f for f in face if f not in faces)
+	# --q-accent-paper: the accent for light paper whatever the theme, for the
+	# certificate card, which is paper in dark mode too.
 	root = (
+		f"--q-accent-paper:{colors['light']['accent']};"
 		f"--q-font-heading:{families['heading']};"
 		f"--q-font-body:{families['body']};"
 		f"--q-font-accent:{families['accent']};"

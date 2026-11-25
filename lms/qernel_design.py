@@ -591,11 +591,23 @@ def page_design():
 			"template": f"{profile['set']}-{profile['template']}",
 			"set": profile["set"],
 			"theme": theme,
-			"name": profile.get("name") or "",
+			"name": _display_name(profile),
 			"logo_light": profile.get("logo_light") or "",
 			"logo_dark": profile.get("logo_dark") or "",
 			"icon": profile.get("icon") or "",
 		},
+	)
+
+
+def _display_name(profile: dict) -> str:
+	"""The name the template signs with (footer, logo text, emails). Qernel
+	always sends the customer's, but a profile without one falls back to the
+	site's own name rather than a bare "©"."""
+	return (
+		profile.get("name")
+		or frappe.conf.get(CUSTOMER_NAME)
+		or frappe.db.get_single_value("Website Settings", "app_name")
+		or ""
 	)
 
 
@@ -622,7 +634,7 @@ def email_design():
 		"page": template["colors"]["page_light"],
 		"ink": template["colors"]["text_dark"],
 		"logo": get_url(logo) if logo else "",
-		"name": profile.get("name") or "",
+		"name": _display_name(profile),
 		"site_url": get_url(),
 	}
 

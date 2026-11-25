@@ -408,6 +408,7 @@ welcome_email = ["lms.qernel.welcome_title"]
 jinja["methods"].append("lms.qernel.welcome_title")
 # Qernel Learn: the customer's template in the email frames, lms/qernel_design.py.
 jinja["methods"].append("lms.qernel_design.email_design")
+jinja["methods"].append("lms.qernel_design.email_frame_footer")
 jinja["methods"].append("lms.qernel_design.certificate_design")
 
 # Qernel Learn: indexes the progress poll reads by, see lms.qernel.learner_progress.

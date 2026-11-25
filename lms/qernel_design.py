@@ -883,6 +883,18 @@ def _display_name(profile: dict) -> str:
 	)
 
 
+_ACCOUNT_FOOTER = re.compile(r"<!-- email_account_footer -->.*?(?=<!-- sender_address -->)", re.S)
+
+
+def email_frame_footer(footer):
+	"""Frappe's email footer without the sending account's own footer (Jinja
+	method). The template's frame already says "Powered by Qernel", and the
+	account footer says it again (lms/qernel_site.py, POWERED_BY). The rest stays:
+	the unsubscribe link and the open check are filled into this footer when the
+	email is sent (frappe/templates/emails/email_footer.html)."""
+	return _ACCOUNT_FOOTER.sub("", footer or "")
+
+
 def email_design():
 	"""What the email frames need (Jinja method, lms/templates/emails): the
 	template's colours for light paper, the logo as a full address, and the

@@ -2,7 +2,7 @@
 <html lang="{{ boot.lang }}" dir="{{ boot.text_direction }}"{% if design %} data-template="{{ design.template }}" data-theme="{{ design.theme }}" data-theme-locked{% endif %}>
 	<head>
 		<meta charset="UTF-8" />
-		{% if design %}<style id="qernel-design">{{ design.css }}</style>{% endif %}
+		{% if design %}{{ design.style_tag }}{% endif %}
 		<script>
 			/* The document is painted from --surface-base, which only resolves to
 			   the dark value once <html data-theme="dark"> exists. src/utils/theme.ts

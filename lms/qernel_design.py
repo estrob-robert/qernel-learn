@@ -578,10 +578,15 @@ def page_design():
 	if not template or not template["available"]:
 		return None
 	theme = profile.get("theme") if profile.get("theme") in THEMES else "light"
+	css = design_css(profile, template)
 	return frappe._dict(
 		template=f"{profile['set']}-{profile['template']}",
 		theme=theme,
-		css=design_css(profile, template),
+		css=css,
+		# The app's index.html takes the whole element, not just its body: vite
+		# runs every inline <style> it finds through postcss at build time, and
+		# "{{ design.css }}" is not CSS until Frappe renders the page.
+		style_tag=f'<style id="qernel-design">{css}</style>',
 		boot={
 			"template": f"{profile['set']}-{profile['template']}",
 			"set": profile["set"],

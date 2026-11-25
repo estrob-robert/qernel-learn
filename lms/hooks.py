@@ -408,6 +408,10 @@ welcome_email = ["lms.qernel.welcome_title"]
 jinja["methods"].append("lms.qernel.welcome_title")
 # Qernel Learn: the customer's template in the email frames, lms/qernel_design.py.
 jinja["methods"].append("lms.qernel_design.email_design")
+jinja["methods"].append("lms.qernel_design.certificate_design")
 
 # Qernel Learn: indexes the progress poll reads by, see lms.qernel.learner_progress.
 after_migrate.append("lms.qernel.add_indexes")
+
+# Qernel Learn: the design guide's preview may be framed by Qernel, and only it.
+after_request = ["lms.qernel_design.preview_headers"]

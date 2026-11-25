@@ -38,6 +38,13 @@ class LMSCertificate(Document):
 			self.send_mail()
 
 	def send_mail(self):
+		# Qernel Learn: a site with a template sends the template's certificate
+		# email in the template's frame (lms/qernel_design.py).
+		from lms.qernel_design import email_design
+
+		if email_design():
+			self.send_template_mail()
+			return
 		subject = _("Congratulations on getting certified!")
 		template = "certification"
 		custom_template = frappe.db.get_single_value("LMS Settings", "certification_template")
@@ -61,6 +68,27 @@ class LMSCertificate(Document):
 			content=content if custom_template else None,
 			args=args,
 			header=[subject, "green"],
+		)
+
+	def send_template_mail(self):
+		from frappe.utils import get_url
+
+		from lms.qernel_design import certificate_design, certificate_pdf_url
+
+		design = certificate_design(self)
+		first_name = frappe.db.get_value("User", self.member, "first_name") or ""
+		subject = _("Your certificate is ready")
+		frappe.sendmail(
+			recipients=self.member,
+			subject=subject,
+			template="qernel_certificate",
+			args={
+				"design": design,
+				"first_name": first_name,
+				"certificates_url": get_url("/lms/certificates"),
+				"pdf_url": get_url(certificate_pdf_url(self.name, self.template)),
+			},
+			wrapper="templates/emails/auth_email.html",
 		)
 
 	def validate_criteria(self):
@@ -219,6 +247,11 @@ def create_certificate(course: str):
 
 
 def get_default_certificate_template():
+	# Qernel Learn: a site with a template gets the template's certificate.
+	from lms.qernel_design import certificate_format
+
+	if template_format := certificate_format():
+		return template_format
 	default_certificate_template = frappe.db.get_value(
 		"Property Setter",
 		{

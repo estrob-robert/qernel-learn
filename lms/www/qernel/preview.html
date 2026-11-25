@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+{#- Qernel Learn: the design guide's preview (preview.py). A whole document, so
+    Frappe does not wrap it in the website frame. -#}
+{%- set p = preview -%}
+{%- set t = p.text -%}
+<html lang="{{ lang }}" data-template="{{ p.template }}" data-theme="{{ p.theme }}">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noindex">
+	<title>{{ t.label }} · {{ p.name | e }}</title>
+	<style id="qernel-design">{{ p.css }}</style>
+	<link rel="stylesheet" href="/assets/lms/css/qernel-preview.css">
+</head>
+<body>
+	<header class="pv-top">
+		<span class="pv-logo">
+			<img id="pv-logo-img" src="{{ p.logo | e }}" alt="{{ p.name | e }}" referrerpolicy="no-referrer" {% if not p.logo %}hidden{% endif %}>
+			<span id="pv-logo-name" class="pv-cond" {% if p.logo %}hidden{% endif %}>{{ p.name | e }}</span>
+		</span>
+		<nav class="pv-nav pv-label" aria-hidden="true">
+			<span class="pv-on">{{ t.nav[0] }}</span><span>{{ t.nav[1] }}</span><span>{{ t.nav[2] }}</span>
+		</nav>
+		<span class="pv-avatar" aria-hidden="true">M</span>
+	</header>
+
+	<main>
+		<section class="pv-hero pv-block">
+			<div class="pv-label">{{ t.greeting }}</div>
+			<h1 class="pv-cond pv-hero-title">{{ t.lesson }}</h1>
+			<p class="pv-quote pv-deck">{{ t.deck }}</p>
+			<div class="pv-track"><i style="width: 44%"></i></div>
+			<div class="pv-row pv-label"><span>{{ t.progress }}</span><span>{{ t.count }}</span></div>
+			<span class="pv-pill pv-pill--on-block">{{ t.continue }} →</span>
+		</section>
+
+		<div class="pv-head">
+			<h2 class="pv-cond">{{ t.my_courses }}</h2>
+			<p class="pv-quote">{{ t.summary }}</p>
+		</div>
+
+		<section class="pv-grid">
+			<div class="pv-tile pv-tile--big">
+				<div class="pv-art" aria-hidden="true"></div>
+				<div class="pv-panel pv-block">
+					<div class="pv-label">{{ t.c1_meta }}</div>
+					<h3 class="pv-cond">{{ t.c1 }}</h3>
+					<div class="pv-track"><i style="width: 10%"></i></div>
+					<div class="pv-label pv-go">{{ t.go }} →</div>
+				</div>
+			</div>
+			<div class="pv-tile pv-tile--mid">
+				<span class="pv-label pv-tag">{{ t.new }}</span>
+				<h3 class="pv-cond">{{ t.c2 }}</h3>
+				<span class="pv-go pv-strong">{{ t.c2_meta }} →</span>
+			</div>
+			<div class="pv-tile pv-tile--done">
+				<div class="pv-label">{{ t.c3_meta }}</div>
+				<h3 class="pv-quote">{{ t.c3 }}</h3>
+				<span class="pv-ul">{{ t.cert }}</span>
+			</div>
+		</section>
+
+		<section class="pv-quiz">
+			<div class="pv-quiz-band pv-block">
+				<div class="pv-label">{{ t.quiz_label }}</div>
+				<h2 class="pv-cond">{{ t.question }}</h2>
+			</div>
+			<div class="pv-options">
+				{%- for option in t.options %}
+				<div class="pv-option{% if loop.index == 2 %} pv-option--right{% elif loop.index == 1 %} pv-option--wrong{% else %} pv-option--dim{% endif %}">
+					<span class="pv-letter">{{ "ABCD"[loop.index0] }}</span><span>{{ option }}</span>
+				</div>
+				{%- endfor %}
+			</div>
+			<div class="pv-feedback">
+				<div class="pv-label pv-accent">{{ t.right }}</div>
+				<p class="pv-quote">{{ t.why }}</p>
+			</div>
+			<span class="pv-pill pv-pill--block">{{ t.next }}</span>
+		</section>
+	</main>
+
+	<footer class="pv-foot pv-label">
+		<span id="pv-foot-name">© {{ p.name | e }}</span><span>Powered by Qernel</span>
+	</footer>
+
+	<nav class="pv-tabs pv-label" aria-hidden="true">
+		<span class="pv-on">{{ t.tabs[0] }}</span><span>{{ t.tabs[1] }}</span><span>{{ t.tabs[2] }}</span>
+	</nav>
+
+	<script>
+		// Qernel posts {type: "qernel:design-preview", profile: {...}} to the open
+		// frame when the customer changes something, so the preview follows
+		// without reloading. Only Qernel's own origins are listened to.
+		;(function () {
+			var allowed = {{ frame_origins | tojson }}
+			var img = document.getElementById('pv-logo-img')
+			var nameText = document.getElementById('pv-logo-name')
+			var footName = document.getElementById('pv-foot-name')
+			var style = document.getElementById('qernel-design')
+			var seq = 0
+			window.addEventListener('message', function (event) {
+				if (allowed.indexOf(event.origin) === -1) return
+				var data = event.data || {}
+				if (data.type !== 'qernel:design-preview' || !data.profile) return
+				var p = data.profile
+				var learn = (p.products && p.products.learn) || {}
+				var fonts = p.fonts || {}
+				var query = new URLSearchParams({
+					set: learn.set || '',
+					template: learn.template || '',
+					theme: learn.theme || 'light',
+					primary: (p.colors && p.colors.primary) || '',
+					heading: (fonts.heading && fonts.heading.id) || '',
+					body: (fonts.body && fonts.body.id) || '',
+				})
+				var mine = ++seq
+				fetch('/api/method/lms.qernel_design.preview_css?' + query.toString(), { credentials: 'omit' })
+					.then(function (r) { return r.json() })
+					.then(function (r) {
+						if (mine !== seq || !r.message) return
+						style.textContent = r.message.css
+						document.documentElement.setAttribute('data-template', r.message.template)
+						document.documentElement.setAttribute('data-theme', r.message.theme)
+					})
+				var brand = p.brand || {}
+				var logo = learn.theme === 'dark' ? brand.logo_dark_url : brand.logo_light_url
+				if (typeof logo === 'string' && logo.indexOf('https://') === 0) {
+					img.src = logo
+					img.hidden = false
+					nameText.hidden = true
+				} else if (logo === null || logo === '') {
+					img.hidden = true
+					nameText.hidden = false
+				}
+				if (typeof brand.name === 'string' && brand.name.trim()) {
+					nameText.textContent = brand.name.trim().slice(0, 120)
+					img.alt = nameText.textContent
+					footName.textContent = '© ' + nameText.textContent
+				}
+			})
+		})()
+	</script>
+</body>
+</html>

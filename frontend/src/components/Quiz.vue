@@ -89,7 +89,7 @@
 						'border-b border-outline-gray-1': !scheduleBlocked || inVideo,
 					}"
 				>
-					<div class="text-base-semibold text-ink-gray-9">
+					<div class="qz-title text-base-semibold text-ink-gray-9">
 						{{ quiz.data.title }}
 					</div>
 					<QuizStats
@@ -268,7 +268,7 @@
 							!attemptsExhausted &&
 							!scheduleBlocked
 						"
-						class="flex flex-wrap items-center justify-between gap-3"
+						class="qz-start flex flex-wrap items-center justify-between gap-3"
 					>
 						<span class="text-sm text-ink-gray-6">
 							<template v-if="quiz.data.enable_proctoring && !cameraReady">
@@ -299,7 +299,7 @@
 				<template v-for="(question, qtidx) in questions" :key="question.name">
 					<div v-if="qtidx == activeQuestion - 1 && questionDetails.data">
 						<div
-							class="flex h-11 items-center gap-3 border-b border-outline-gray-1 bg-surface-gray-1 px-3.5"
+							class="qz-qhead flex h-11 items-center gap-3 border-b border-outline-gray-1 bg-surface-gray-1 px-3.5"
 						>
 							<span class="shrink-0 text-sm text-ink-gray-6">
 								{{
@@ -346,7 +346,7 @@
 								</div>
 								<div
 									:id="questionTextId"
-									class="text-p-base font-semibold text-ink-gray-9 break-words [&_img]:h-auto [&_img]:max-w-full"
+									class="qz-question text-p-base font-semibold text-ink-gray-9 break-words [&_img]:h-auto [&_img]:max-w-full"
 									v-safe-html:rich="questionDetails.data.question"
 								></div>
 							</div>
@@ -355,7 +355,7 @@
 								v-if="questionDetails.data.type == 'Choices'"
 								:role="questionDetails.data.multiple ? 'group' : 'radiogroup'"
 								:aria-labelledby="questionTextId"
-								class="flex flex-col gap-1.5"
+								class="qz-options flex flex-col gap-1.5"
 							>
 								<template v-for="index in MAX_OPTIONS" :key="index">
 									<template v-if="questionDetails.data[`option_${index}`]">
@@ -465,7 +465,7 @@
 								/>
 							</div>
 
-							<div class="flex flex-wrap items-center gap-4 pt-2">
+							<div class="qz-actions flex flex-wrap items-center gap-4 pt-2">
 								<div class="flex-1">
 									<Checkbox
 										v-if="!quiz.data.show_answers"
@@ -529,7 +529,7 @@
 			</div>
 
 			<div v-else>
-				<div class="space-y-3 p-3.5">
+				<div class="qz-result space-y-3 p-3.5">
 					<h2 ref="summaryHeading" tabindex="-1" class="sr-only">
 						{{ __('Quiz result') }}
 					</h2>

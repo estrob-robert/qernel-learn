@@ -2,11 +2,11 @@
 	<div class="flex flex-col h-full">
 		<div
 			v-if="!hideHeader || withProgress"
-			class="bg-surface-gray-1 px-5 py-5 border-b"
+			class="sls-head bg-surface-gray-1 px-5 py-5 border-b"
 		>
 			<div
 				v-if="!hideHeader"
-				class="text-lg-semibold text-ink-gray-9 leading-snug"
+				class="sls-title text-lg-semibold text-ink-gray-9 leading-snug"
 			>
 				{{ courseTitle }}
 			</div>

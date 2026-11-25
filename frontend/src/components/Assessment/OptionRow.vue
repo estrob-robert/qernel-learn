@@ -1,6 +1,6 @@
 <template>
 	<label
-		class="flex w-full min-w-0 cursor-pointer items-center gap-x-2.5 rounded-6 border border-outline-gray-2 px-3 py-2.5 hover:bg-surface-gray-1 focus-within:border-outline-gray-4"
+		class="as-option flex w-full min-w-0 cursor-pointer items-center gap-x-2.5 rounded-6 border border-outline-gray-2 px-3 py-2.5 hover:bg-surface-gray-1 focus-within:border-outline-gray-4"
 	>
 		<slot name="control" />
 		<span

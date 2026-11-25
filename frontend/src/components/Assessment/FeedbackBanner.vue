@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="flex items-start gap-2 rounded-6 border p-3 text-p-base"
+		class="as-feedback flex items-start gap-2 rounded-6 border p-3 text-p-base"
+		:data-correct="correct ? 'true' : 'false'"
 		:class="
 			correct
 				? 'border-outline-green-3 bg-surface-green-2 text-ink-green-7'

@@ -34,7 +34,7 @@
 					/>
 					<div
 						v-else
-						class="truncate text-base-medium leading-5 text-ink-gray-9"
+						class="chr-title truncate text-base-medium leading-5 text-ink-gray-9"
 						:title="chapter.title"
 						@dblclick="allowEdit && !chapter.is_scorm_package && startRename()"
 					>
@@ -116,6 +116,7 @@
 					<div
 						class="ps-8 py-2 pe-4 text-ink-gray-9 flex items-center group"
 						data-testid="outline-lesson"
+						:data-active="isActiveLesson(lesson.number) ? 'true' : undefined"
 						:class="
 							isActiveLesson(lesson.number) ? 'bg-surface-gray-3 rounded-5' : ''
 						"

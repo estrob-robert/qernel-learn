@@ -61,7 +61,7 @@
 			</Button>
 		</div>
 
-		<div class="grid md:grid-cols-[70%,30%] sm:h-[94vh]">
+		<div class="lsn-grid grid md:grid-cols-[70%,30%] sm:h-[94vh]">
 			<div v-if="lesson.data.no_preview" class="sm:border-e">
 				<div class="shadow rounded-5 w-3/4 mt-10 mx-auto text-center p-4">
 					<div class="flex items-center justify-center mt-4 gap-x-2">
@@ -120,7 +120,7 @@
 				}"
 			>
 				<div
-					class="sm:border-e pt-8 sm:pt-5 pb-10 h-full"
+					class="lsn-main sm:border-e pt-8 sm:pt-5 pb-10 h-full"
 					:class="{
 						'w-full md:w-3/5 mx-auto border-none !pt-10': zenModeEnabled,
 					}"
@@ -283,6 +283,15 @@
 							/>
 						</div>
 					</div>
+					<SondagsbilagLessonEnd
+						v-if="templateScreens && activeTemplate === 'magasin-sondagsbilag'"
+						class="mx-5"
+						:courseName="courseName"
+						:nextTitle="outlineLessons[currentIndex + 1]?.title ?? null"
+						:canNext="canGoNext"
+						:last="outlineReady && lessonTotal > 0 && !hasNext"
+						@next="goNext()"
+					/>
 					<div
 						v-if="lesson.data && tabs.length"
 						class="mt-10 pb-20 pt-5 border-t px-5"
@@ -313,7 +322,7 @@
 					</div>
 				</div>
 			</div>
-			<aside v-if="!isMobile" class="sticky top-10 h-[94vh]">
+			<aside v-if="!isMobile" class="lsn-aside sticky top-10 h-[94vh]">
 				<StudentLessonSidebar
 					:courseName="courseName"
 					:courseTitle="lesson.data.course_title"
@@ -419,6 +428,7 @@ import StudentLessonSidebar from '@/components/StudentLessonSidebar.vue'
 import BottomSheet from '@/components/BottomSheet.vue'
 import PageHeader from '@/components/Layouts/PageHeader.vue'
 import SondagsbilagLessonBand from '@/templates/sondagsbilag/LessonBand.vue'
+import SondagsbilagLessonEnd from '@/templates/sondagsbilag/LessonEnd.vue'
 import { activeTemplate, useTemplateScreens } from '@/templates'
 import HeaderButton from '@/components/HeaderButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'

@@ -358,10 +358,11 @@ def my_learning():
 		frappe.throw(_("Please log in."), frappe.PermissionError)
 	from lms.qernel import _progress_items
 
+	batches, live = _my_batches(user)
 	names = frappe.get_all("LMS Enrollment", {"member": user}, pluck="name")
 	items = _progress_items(names)
 	if not items:
-		return {"continue": None, "courses": []}
+		return {"continue": None, "courses": [], "batches": batches, "live": live}
 	courses = [item["course"] for item in items]
 	meta = {
 		row.name: row
@@ -414,7 +415,89 @@ def my_learning():
 	result.sort(key=lambda c: (c["last_activity_at"] or "", c["enrolled_at"] or ""), reverse=True)
 	result.sort(key=lambda c: c["completed"])
 	going = next((c for c in result if not c["completed"] and c["next_lesson"]), None)
-	return {"continue": going, "courses": result}
+	return {"continue": going, "courses": result, "batches": batches, "live": live}
+
+
+def _my_batches(user: str) -> tuple[list, list]:
+	"""The learner's cohorts that are running or about to start, and the next
+	live sessions in them. A cohort that has ended drops off; its courses stay
+	under the courses."""
+	from frappe.utils import get_datetime, getdate, nowdate
+
+	enrolled = frappe.get_all("LMS Batch Enrollment", {"member": user}, pluck="batch")
+	if not enrolled:
+		return [], []
+	today = getdate(nowdate())
+	rows = frappe.get_all(
+		"LMS Batch",
+		{"name": ("in", enrolled)},
+		[
+			"name",
+			"title",
+			"description",
+			"start_date",
+			"end_date",
+			"start_time",
+			"end_time",
+			"timezone",
+			"medium",
+			"meta_image",
+		],
+		order_by="start_date asc",
+	)
+	titles = {row.name: row.title for row in rows}
+	running = [row for row in rows if not row.end_date or getdate(row.end_date) >= today]
+	from lms.lms.api import get_batch_progress
+
+	progress = get_batch_progress([row.name for row in running])
+	batches = [
+		{
+			"batch": row.name,
+			"title": row.title,
+			"description": row.description,
+			"start_date": str(row.start_date) if row.start_date else None,
+			"end_date": str(row.end_date) if row.end_date else None,
+			"start_time": str(row.start_time) if row.start_time else None,
+			"end_time": str(row.end_time) if row.end_time else None,
+			"timezone": row.timezone,
+			"medium": row.medium,
+			"image": row.meta_image,
+			"started": bool(row.start_date and getdate(row.start_date) <= today),
+			"progress": (progress.get(row.name) or {}).get("progress"),
+		}
+		for row in running
+	]
+
+	now = get_datetime()
+	live = []
+	for row in frappe.get_all(
+		"LMS Live Class",
+		{"batch_name": ("in", enrolled), "date": (">=", today)},
+		["name", "title", "description", "date", "time", "duration", "timezone", "join_url", "batch_name"],
+		order_by="date asc, time asc",
+		limit=6,
+	):
+		if row.time is not None:
+			start = get_datetime(f"{row.date} {row.time}")
+			if start.timestamp() + (row.duration or 60) * 60 < now.timestamp():
+				continue
+		live.append(
+			{
+				"name": row.name,
+				"title": row.title,
+				"description": row.description,
+				"date": str(row.date),
+				"time": str(row.time) if row.time is not None else None,
+				"duration": row.duration,
+				"timezone": row.timezone,
+				"join_url": row.join_url if (row.join_url or "").startswith("https://") else None,
+				"batch": row.batch_name,
+				"batch_title": titles.get(row.batch_name),
+			}
+		)
+		if len(live) == 3:
+			break
+	return batches, live
 
 
 @frappe.whitelist()
@@ -466,6 +549,132 @@ def my_results():
 			}
 		)
 	return courses
+
+
+CERTIFICATE_FORMATS = {"magasin-sondagsbilag": "Qernel Sondagsbilag"}
+
+
+def certificate_format() -> str | None:
+	"""The print format for certificates on a site with a template, or None
+	for Frappe's own. Used when a certificate is made, by the certificate
+	email's link and by the template's Kursbevis page."""
+	profile = frappe.conf.get(PROFILE) or {}
+	name = CERTIFICATE_FORMATS.get(f"{profile.get('set')}-{profile.get('template')}")
+	if name and frappe.db.exists("Print Format", name):
+		return name
+	return None
+
+
+def certificate_pdf_url(certificate: str, template: str | None = None) -> str:
+	from urllib.parse import urlencode
+
+	query = urlencode(
+		{
+			"doctype": "LMS Certificate",
+			"name": certificate,
+			"format": certificate_format() or template or "Certificate",
+			"no_letterhead": 1,
+		}
+	)
+	return f"/api/method/frappe.utils.print_format.download_pdf?{query}"
+
+
+@frappe.whitelist()
+def my_certificates():
+	"""The signed-in learner's certificates for the template's Kursbevis page,
+	newest first, with what the certificate card shows."""
+	user = frappe.session.user
+	if user == "Guest":
+		frappe.throw(_("Please log in."), frappe.PermissionError)
+	rows = frappe.get_all(
+		"LMS Certificate",
+		{"member": user},
+		["name", "course", "batch_name", "issue_date", "template"],
+		order_by="issue_date desc, creation desc",
+	)
+	courses = list({row.course for row in rows if row.course})
+	titles = dict(
+		frappe.get_all("LMS Course", {"name": ("in", courses or [""])}, ["name", "title"], as_list=True)
+	)
+	batches = list({row.batch_name for row in rows if row.batch_name})
+	batch_titles = dict(
+		frappe.get_all("LMS Batch", {"name": ("in", batches or [""])}, ["name", "title"], as_list=True)
+	)
+	return {
+		"member_name": frappe.db.get_value("User", user, "full_name"),
+		"certificates": [
+			{
+				"name": row.name,
+				"course": row.course,
+				"title": titles.get(row.course) or batch_titles.get(row.batch_name) or row.course,
+				"issue_date": str(row.issue_date) if row.issue_date else None,
+				"lessons": frappe.db.count("Course Lesson", {"course": row.course}) if row.course else None,
+				"instructors": _instructor_names(row.course) if row.course else [],
+				"pdf": certificate_pdf_url(row.name, row.template),
+			}
+			for row in rows
+		],
+	}
+
+
+def _instructor_names(course: str) -> list[str]:
+	users = frappe.get_all(
+		"Course Instructor",
+		{"parent": course, "parenttype": "LMS Course"},
+		pluck="instructor",
+		order_by="idx asc",
+	)
+	names = dict(frappe.get_all("User", {"name": ("in", users or [""])}, ["name", "full_name"], as_list=True))
+	return [names.get(u) or u for u in users]
+
+
+def certificate_design(doc=None):
+	"""What the template's certificate (print format "Qernel Sondagsbilag")
+	shows, as a Jinja method. Colours for paper, fonts and logo inline, so the
+	PDF renders without fetching anything. None on a site without a template."""
+	profile = frappe.conf.get(PROFILE)
+	if not profile or not doc:
+		return None
+	template = _template(profile.get("set"), profile.get("template"))
+	if not template or not template["available"]:
+		return None
+	from frappe.utils import format_date
+
+	light = derive(profile["primary"], **template["colors"])["light"]
+	logo = profile.get("logo_light") or ""
+	logo_data = ""
+	if SAFE_URL.match(logo):
+		path = frappe.get_site_path("public", "files", logo.rsplit("/", 1)[1])
+		ext = logo.rsplit(".", 1)[-1].lower()
+		mime = {
+			"svg": "image/svg+xml",
+			"png": "image/png",
+			"jpg": "image/jpeg",
+			"jpeg": "image/jpeg",
+			"webp": "image/webp",
+		}.get(ext)
+		if mime and os.path.exists(path):
+			logo_data = _data_url(path, mime)
+	member = frappe.db.get_value("User", doc.member, ["full_name", "first_name"], as_dict=True) or {}
+	course_title = frappe.db.get_value("LMS Course", doc.course, "title") if doc.course else None
+	if not course_title and doc.get("batch_name"):
+		course_title = frappe.db.get_value("LMS Batch", doc.batch_name, "title")
+	instructors = _instructor_names(doc.course) if doc.course else []
+	return frappe._dict(
+		css=design_css(profile, template, inline=True),
+		block=light["block"],
+		on_block=light["on_block"],
+		accent=light["accent"],
+		page=template["colors"]["page_light"],
+		ink=template["colors"]["text_dark"],
+		logo=logo_data,
+		name=_display_name(profile),
+		member_name=member.get("full_name") or doc.member,
+		course_title=course_title or "",
+		instructor=", ".join(instructors[:2]),
+		issue_date=format_date(doc.issue_date, "d. MMMM yyyy") if doc.issue_date else "",
+		lessons=frappe.db.count("Course Lesson", {"course": doc.course}) if doc.course else None,
+	)
 
 
 @frappe.whitelist()
@@ -565,6 +774,62 @@ def _lesson_kinds(content: str | None, body: str | None) -> list[str]:
 	return [kind for kind in ("quiz", "assignment") if kind in found]
 
 
+# ---------------------------------------------------------------- the preview
+
+PREVIEW_PATH = "/qernel/preview"
+PREVIEW_ANCESTORS = "qernel_preview_frame_ancestors"
+ORIGIN = re.compile(r"^https://[a-z0-9.\-]+(:[0-9]{2,5})?$")
+
+
+def preview_profile(args: dict) -> tuple[dict, dict]:
+	"""A profile for the preview from query values, every one checked: a
+	catalogued, available template, light or dark, a #rrggbb colour and fonts
+	from the catalogue. Anything else falls back to the template's own, so the
+	preview always draws. Nothing here is stored."""
+	template = _template(args.get("set"), args.get("template"))
+	if not template or not template["available"]:
+		set_id, template = next(
+			(entry["id"], t) for entry in CATALOG for t in entry["templates"] if t["available"]
+		)
+	else:
+		set_id = args.get("set")
+	try:
+		primary = "#" + "".join(f"{c:02x}" for c in parse_hex(args.get("primary") or ""))
+	except ValueError:
+		primary = template["default_primary"]
+	fonts = {
+		role: {"id": args.get(role)} if args.get(role) in _fonts() else None for role in ("heading", "body")
+	}
+	theme = args.get("theme") if args.get("theme") in THEMES else "light"
+	profile = {"set": set_id, "template": template["id"], "theme": theme, "primary": primary, "fonts": fonts}
+	return profile, template
+
+
+@frappe.whitelist(allow_guest=True, methods=["GET"])
+def preview_css(**args):
+	"""The preview's colours and fonts for a profile, for the live update the
+	preview page does when Qernel posts a change. Pure: reads and stores
+	nothing."""
+	profile, template = preview_profile(args)
+	return {
+		"template": f"{profile['set']}-{profile['template']}",
+		"theme": profile["theme"],
+		"css": design_css(profile, template),
+	}
+
+
+def preview_headers(response, request):
+	"""after_request: the preview page, and only it, may be shown in a frame on
+	Qernel. A browser ignores the proxy's X-Frame-Options when the page states
+	frame-ancestors, so every other page keeps refusing frames."""
+	if request.path.rstrip("/") != PREVIEW_PATH:
+		return
+	allowed = frappe.conf.get(PREVIEW_ANCESTORS) or ["https://www.qernel.one"]
+	origins = " ".join(o for o in allowed if isinstance(o, str) and ORIGIN.match(o))
+	response.headers["Content-Security-Policy"] = f"frame-ancestors 'self' {origins}".strip()
+	response.headers.pop("X-Frame-Options", None)
+
+
 # ---------------------------------------------------------------- the page shell
 
 
@@ -646,7 +911,7 @@ def email_design():
 	}
 
 
-def design_css(profile: dict, template: dict) -> str:
+def design_css(profile: dict, template: dict, inline: bool = False) -> str:
 	"""The template's variables for the customer's colour and fonts. Every value
 	here was validated on the way in (hex colours, catalogued fonts, family
 	names of letters, digits, spaces and hyphens, File addresses)."""
@@ -655,7 +920,7 @@ def design_css(profile: dict, template: dict) -> str:
 	families = {}
 	for role in ("heading", "body", "accent"):
 		chosen = (profile.get("fonts") or {}).get(role) if role != "accent" else None
-		family, face = _family(chosen or {"id": template["fonts"][role]})
+		family, face = _family(chosen or {"id": template["fonts"][role]}, inline)
 		families[role] = family
 		faces.extend(f for f in face if f not in faces)
 	root = (
@@ -689,17 +954,24 @@ def _template(set_id, template_id):
 	return None
 
 
-def _family(font: dict) -> tuple[str, list[str]]:
-	"""CSS font-family value and the @font-face rules it needs."""
+def _family(font: dict, inline: bool = False) -> tuple[str, list[str]]:
+	"""CSS font-family value and the @font-face rules it needs. `inline` puts
+	the font files in the rules as data addresses, for the certificate PDF,
+	which renders without fetching anything."""
 	if font.get("id"):
 		entry = _fonts().get(font["id"])
 		if not entry:
 			return "system-ui,sans-serif", []
 		faces = []
 		for f in entry["files"]:
+			src = (
+				_data_url(frappe.get_app_path("lms", "public", f["file"]), "font/woff2")
+				if inline
+				else f"/assets/lms/{f['file']}"
+			)
 			rule = (
 				f"@font-face{{font-family:'{entry['family']}';font-style:{f['style']};"
-				f"font-weight:{f['weight']};font-display:swap;src:url('/assets/lms/{f['file']}') format('woff2');"
+				f"font-weight:{f['weight']};font-display:swap;src:url('{src}') format('woff2');"
 			)
 			if f.get("stretch"):
 				rule += f"font-stretch:{f['stretch']};"
@@ -708,8 +980,16 @@ def _family(font: dict) -> tuple[str, list[str]]:
 			faces.append(rule + "}")
 		return f"'{entry['family']}',{entry['fallback']}", faces
 	family = font["family"]
-	face = f"@font-face{{font-family:'{family}';font-display:swap;src:url('{font['url']}') format('woff2');}}"
+	src = font["url"]
+	if inline and SAFE_URL.match(src):
+		src = _data_url(frappe.get_site_path("public", "files", src.rsplit("/", 1)[1]), "font/woff2")
+	face = f"@font-face{{font-family:'{family}';font-display:swap;src:url('{src}') format('woff2');}}"
 	return f"'{family}',system-ui,sans-serif", [face]
+
+
+def _data_url(path: str, mime: str) -> str:
+	with open(path, "rb") as f:
+		return f"data:{mime};base64,{base64.b64encode(f.read()).decode()}"
 
 
 def _font(value, keep):

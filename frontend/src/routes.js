@@ -20,6 +20,18 @@ export const routes = [
 		),
 	},
 	{
+		path: '/certificates',
+		name: 'QernelCertificates',
+		// Qernel Learn: the learner's certificates, from the Certificates tab.
+		component: templated(
+			{
+				'magasin-sondagsbilag': () =>
+					import('@/templates/sondagsbilag/Certificates.vue'),
+			},
+			() => import('@/pages/NotFound.vue')
+		),
+	},
+	{
 		path: '/results',
 		name: 'QernelResults',
 		// Qernel Learn: quiz results and assignment feedback, reached from More.

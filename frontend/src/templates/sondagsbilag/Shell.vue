@@ -182,12 +182,9 @@ const navItems = computed(() => [
 	},
 	{
 		label: 'Certificates',
-		to: {
-			name: 'ProfileCertificates',
-			params: { username: user.value?.username || '-' },
-		},
+		to: { name: 'QernelCertificates' },
 		icon: Award,
-		active: routeIs('ProfileCertificates'),
+		active: routeIs('QernelCertificates', 'ProfileCertificates'),
 	},
 ])
 

@@ -1,7 +1,7 @@
 <template>
 	<div
 		data-testid="assessment-card-header"
-		class="flex min-h-11 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-outline-gray-1 bg-surface-gray-1 px-3 py-2"
+		class="as-head flex min-h-11 flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-outline-gray-1 bg-surface-gray-1 px-3 py-2"
 	>
 		<div
 			data-testid="header-heading"

@@ -37,6 +37,32 @@
 				</div>
 			</section>
 
+			<section v-if="data.live?.length" class="mc-live" :aria-label="__('Live sessions')">
+				<div class="sb-label mc-live-label">{{ __('Next live session') }}</div>
+				<div v-for="session in data.live" :key="session.name" class="mc-live-row">
+					<div class="mc-live-date sb-on-block">
+						<span class="sb-cond">{{ dayOf(session.date) }}</span>
+						<span class="sb-label">{{ monthOf(session.date) }}</span>
+					</div>
+					<div class="mc-live-text">
+						<h3 class="sb-cond">{{ session.title }}</h3>
+						<p class="sb-label mc-live-meta">
+							<span v-if="session.time">{{ clock(session.time) }}</span>
+							<span v-if="session.duration">{{ __('{0} min').format(session.duration) }}</span>
+							<span v-if="session.batch_title">{{ session.batch_title }}</span>
+						</p>
+					</div>
+					<a
+						v-if="session.join_url"
+						v-external
+						class="sb-pill sb-pill--block mc-live-join"
+						:href="safeUrl(session.join_url)"
+					>
+						{{ __('Join') }}
+					</a>
+				</div>
+			</section>
+
 			<div class="mc-head">
 				<h2 class="sb-cond">{{ __('My Courses') }}</h2>
 				<p v-if="data.courses.length" class="sb-quote">{{ summary }}</p>
@@ -75,7 +101,7 @@
 							<router-link
 								v-if="course.certificate"
 								class="mc-ul"
-								:to="{ name: 'ProfileCertificates', params: { username: user?.username || '-' } }"
+								:to="{ name: 'QernelCertificates', query: { c: course.certificate.name } }"
 							>
 								{{ __('See certificate') }}
 							</router-link>
@@ -91,6 +117,43 @@
 					</div>
 				</template>
 			</section>
+
+			<template v-if="data.batches?.length">
+				<div class="mc-head">
+					<h2 class="sb-cond">{{ __('My cohorts') }}</h2>
+					<p class="sb-quote">{{ __('Courses you take together with others, on set dates.') }}</p>
+				</div>
+				<section class="mc-batches">
+					<router-link
+						v-for="batch in data.batches"
+						:key="batch.batch"
+						:to="{ name: 'BatchDetail', params: { batchName: batch.batch } }"
+						class="mc-batch"
+					>
+						<img v-if="batch.image" :src="safeUrl(batch.image)" alt="" />
+						<div class="mc-batch-text">
+							<span class="sb-label mc-tag">
+								{{ batch.started ? __('Running now') : __('Starts {0}').format(longDate(batch.start_date)) }}
+							</span>
+							<h3 class="sb-cond">{{ batch.title }}</h3>
+							<p class="sb-label mc-batch-meta">
+								<span v-if="batch.start_date && batch.end_date">
+									{{ longDate(batch.start_date) }} – {{ longDate(batch.end_date) }}
+								</span>
+								<span v-if="batch.start_time">
+									{{ clock(batch.start_time) }}<template v-if="batch.end_time">–{{ clock(batch.end_time) }}</template>
+								</span>
+								<span v-if="batch.medium">{{ __(batch.medium) }}</span>
+							</p>
+							<template v-if="batch.started && batch.progress != null">
+								<div class="sb-track"><i :style="{ width: `${batch.progress}%` }" /></div>
+								<span class="sb-label mc-go">{{ __('{0} % completed').format(Math.round(batch.progress)) }}</span>
+							</template>
+							<span v-else class="mc-go mc-go--plain">{{ __('See the cohort') }} →</span>
+						</div>
+					</router-link>
+				</section>
+			</template>
 		</template>
 	</div>
 </template>
@@ -151,6 +214,13 @@ const lessonRoute = (course: any) => ({
 		lessonNumber: course.next_lesson.lesson_number,
 	},
 })
+
+const lang = () => (window as any).lang || 'nb'
+const dayOf = (value: string) => new Intl.DateTimeFormat(lang(), { day: 'numeric' }).format(new Date(value))
+const monthOf = (value: string) =>
+	new Intl.DateTimeFormat(lang(), { month: 'short' }).format(new Date(value)).replace('.', '')
+// Times as 24 hours, from Frappe's "14:00:00".
+const clock = (value: string) => String(value).slice(0, 5).padStart(5, '0')
 
 const longDate = (value: string) =>
 	new Intl.DateTimeFormat((window as any).lang || 'nb', {
@@ -347,6 +417,89 @@ usePageMeta(() => ({
 	border-bottom: 2px solid currentColor;
 	padding-bottom: 2px;
 }
+.mc-live {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding-top: 40px;
+}
+.mc-live-label {
+	color: var(--q-accent);
+}
+.mc-live-row {
+	display: grid;
+	grid-template-columns: 96px minmax(0, 1fr) auto;
+	gap: 24px;
+	align-items: center;
+	background: var(--sb-tint);
+	padding: 0 24px 0 0;
+}
+.mc-live-date {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	min-height: 96px;
+}
+.mc-live-date .sb-cond {
+	font-size: 44px;
+}
+.mc-live-text h3 {
+	font-size: clamp(26px, 2.6vw, 36px);
+	margin: 0 0 8px;
+}
+.mc-live-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 18px;
+	margin: 0;
+	color: var(--sb-ink-2);
+}
+.mc-batches {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+	gap: 24px;
+}
+.mc-batch {
+	display: grid;
+	grid-template-columns: 40% 1fr;
+	min-height: 230px;
+	background: var(--sb-tint);
+}
+.mc-batch:not(:has(img)) {
+	grid-template-columns: 1fr;
+}
+.mc-batch img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+.mc-batch-text {
+	padding: 22px 24px 24px;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+.mc-batch-text h3 {
+	font-size: clamp(30px, 3vw, 42px);
+	margin: 14px 0 10px;
+}
+.mc-batch-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 16px;
+	margin: 0 0 16px;
+	color: var(--sb-ink-2);
+}
+.mc-batch .mc-go,
+.mc-batch .sb-track {
+	margin-top: auto;
+}
+.mc-batch .sb-track + .mc-go {
+	margin-top: 10px;
+}
 .mc-loading {
 	display: flex;
 	flex-direction: column;
@@ -420,6 +573,45 @@ usePageMeta(() => ({
 		width: 84px;
 		height: 108px;
 		border-radius: 42px 42px 0 0;
+	}
+	.mc-live {
+		padding-top: 24px;
+	}
+	.mc-live-row {
+		grid-template-columns: 76px minmax(0, 1fr);
+		gap: 16px;
+		padding: 0;
+	}
+	.mc-live-date {
+		min-height: 88px;
+		grid-row: span 2;
+		align-self: stretch;
+	}
+	.mc-live-date .sb-cond {
+		font-size: 36px;
+	}
+	.mc-live-text {
+		padding-top: 14px;
+	}
+	.mc-live-join {
+		justify-self: start;
+		margin: 0 0 14px;
+		min-height: 44px;
+		padding: 0 20px;
+	}
+	.mc-batches {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+	.mc-batch {
+		grid-template-columns: 1fr;
+		min-height: 0;
+	}
+	.mc-batch img {
+		height: 170px;
+	}
+	.mc-batch-text {
+		padding: 16px 18px 18px;
 	}
 }
 </style>

@@ -14,7 +14,7 @@
 	if (!window.location.hash) {
 		history.replaceState(null, '', window.location.pathname + window.location.search + '#login-with-email-link')
 	}
-	{% if design.theme == 'dark' and design.boot.logo_dark %}
+	{% if design.login_on_dark and design.boot.logo_dark %}
 	document.addEventListener('DOMContentLoaded', function () {
 		document.querySelectorAll('.app-logo').forEach(function (img) {
 			img.src = {{ design.boot.logo_dark | tojson }}
@@ -27,11 +27,12 @@
 
 {% block page_content %}
 {% if design %}
-<div class="qsb-login{% if design.theme == 'dark' and not design.boot.logo_dark %} qsb-login--named{% endif %}">
-	{#- Dark mode takes only the dark-background logo, as in the app
+<div class="qsb-login{% if design.login_on_dark and not design.boot.logo_dark %} qsb-login--named{% endif %}">
+	{#- On a dark ground (dark mode, or a deep colour block in light mode) only
+	    the dark-background logo may stand, as in the app
 	    (frontend/src/templates/index.ts): without one, the name in the
-	    template's type stands in for a logo that may vanish on the dark page. -#}
-	{% if design.theme == 'dark' and not design.boot.logo_dark %}
+	    template's type stands in for a logo that may vanish there. -#}
+	{% if design.login_on_dark and not design.boot.logo_dark %}
 	<div class="qsb-login-name qsb-cond">{{ design.boot.name }}</div>
 	{% endif %}
 	<div class="qsb-login-head">

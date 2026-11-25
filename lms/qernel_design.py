@@ -31,7 +31,7 @@ from frappe import _
 from frappe.utils import now_datetime
 
 from lms.qernel import CUSTOMER_NAME
-from lms.qernel_color import derive, parse_hex
+from lms.qernel_color import BLACK, WHITE, contrast, derive, parse_hex
 
 PROFILE = "qernel_design"
 INTEGRATION_ROLE = "Qernel Integration"
@@ -579,7 +579,14 @@ def page_design():
 		return None
 	theme = profile.get("theme") if profile.get("theme") in THEMES else "light"
 	css = design_css(profile, template)
+	# The login page stands on the template's colour block in light mode and on
+	# the dark page in dark mode. Which logo can stand there depends on how dark
+	# that ground really is, not on the theme's name: a deep primary makes the
+	# light-mode login dark too (learn.qernel.one, 25.11).
+	block = parse_hex(derive(profile["primary"], **template["colors"])[theme]["block"])
+	login_on_dark = theme == "dark" or contrast(block, WHITE) > contrast(block, BLACK)
 	return frappe._dict(
+		login_on_dark=login_on_dark,
 		template=f"{profile['set']}-{profile['template']}",
 		theme=theme,
 		css=css,
